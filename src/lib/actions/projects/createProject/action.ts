@@ -10,6 +10,7 @@ export const createProjectAction = authActionClient
     try {
       return await createProject(parsedInput, ctx.user.userId);
     } catch (error) {
+      console.error("Project creation error:", error);
       throw new Error("Something went wrong", { cause: error });
     }
   });

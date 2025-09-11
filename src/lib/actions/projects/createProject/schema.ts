@@ -1,10 +1,15 @@
 import { z } from "zod";
+import { ProjectType } from "@/generated/prisma";
 
 export const createProjectSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  type: z.enum(["post", "article", "ebook", "script"], {
-    message: "Invalid project type"
-  })
+  title: z
+    .string()
+    .trim()
+    .min(1, { message: "Title is required" })
+    .max(200, { message: "Title is too long" }),
+  type: z.enum(ProjectType, {
+    message: "Invalid project type",
+  }),
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
