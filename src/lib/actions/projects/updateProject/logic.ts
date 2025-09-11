@@ -27,7 +27,6 @@ export async function updateProject(input: UpdateProjectInput, userId: string): 
       where: { id },
       data: {
         title: data.title,
-        type: data.type,
         // updatedAt will be automatically updated by Prisma
       },
     });
