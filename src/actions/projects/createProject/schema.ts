@@ -7,7 +7,7 @@ export const createProjectSchema = z.object({
     .trim()
     .min(1, { message: "Title is required" })
     .max(200, { message: "Title is too long" }),
-  type: z.enum(ProjectType, {
+  type: z.nativeEnum(ProjectType, {
     message: "Invalid project type",
   }),
 });
