@@ -55,7 +55,7 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
       },
       session: {
         destroy: ctx.session.destroy,
-        headers: ctx.session.save,
+        save: ctx.session.save,
         user: {
           id: userId
         }
