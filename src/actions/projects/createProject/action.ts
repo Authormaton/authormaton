@@ -1,6 +1,6 @@
 "use server";
 
-import { authActionClient } from "@/lib/createSafeAction";
+import { authActionClient } from "@/lib/action";
 import { createProject } from "./logic";
 import { createProjectSchema } from "./schema";
 

@@ -5,7 +5,10 @@ import { error, Result, success } from "@/lib/result";
 import { Project } from "@/generated/prisma";
 import { CreateProjectInput } from "./schema";
 
-export async function createProject(input: CreateProjectInput, userId: string): Promise<Result<Project>> {
+export async function createProject(
+  input: CreateProjectInput,
+  userId: string
+): Promise<Result<Project>> {
   try {
     const { title, type } = input;
 
@@ -14,8 +17,8 @@ export async function createProject(input: CreateProjectInput, userId: string): 
       data: {
         title,
         type,
-        userId
-      }
+        userId,
+      },
     });
 
     return success(newProject);
