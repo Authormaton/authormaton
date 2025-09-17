@@ -11,7 +11,7 @@ export const deleteProjectAction = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const userId = ctx.user.id;
     try {
-      const existingProject = await prisma.project.findUnique({
+      const existingProject = await prisma.project.findFirst({
         where: {
           id: parsedInput.id,
           userId
