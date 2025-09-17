@@ -24,6 +24,6 @@ export const signupAction = actionClient
       return result.data;
     } catch (error) {
       console.error('Signup error:', error);
-      throw new Error('Something went wrong', { cause: error });
+      throw new Error((error as Error).message, { cause: error });
     }
   });
