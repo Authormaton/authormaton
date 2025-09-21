@@ -8,7 +8,6 @@ import { UpdateProjectInput } from './schema';
 export async function updateProject(input: UpdateProjectInput): Promise<Result<Project>> {
   const { id, title } = input;
 
-  // Update project
   const updatedProject = await prisma.project.update({
     where: { id },
     data: {

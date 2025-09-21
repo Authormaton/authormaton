@@ -9,7 +9,7 @@ export const updateProjectAction = authActionClient
   .inputSchema(updateProjectSchema)
   .metadata({ actionName: 'updateProject' })
   .action(async ({ parsedInput, ctx }) => {
-    const userId = ctx.user.id;
+    const userId = ctx.session.user.id;
 
     try {
       // Check if project exists and belongs to the user
@@ -33,9 +33,16 @@ export const updateProjectAction = authActionClient
         return updateProjectResult.data;
       }
 
-      throw new Error(updateProjectResult.error);
-    } catch (error) {
+      throw new Error(updateProjectResult.error, { cause: { internal: true } });
+    } catch (err) {
+      const error = err as Error;
+      const cause = error.cause as { internal: boolean } | undefined;
+
+      if (cause?.internal) {
+        throw new Error(error.message);
+      }
+
       console.error('Project update error:', error, { userId });
-      throw new Error('Something went wrong', { cause: error });
+      throw new Error('Something went wrong');
     }
   });

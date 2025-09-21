@@ -32,7 +32,7 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
   const userId = ctx.session.user?.id;
 
   if (!userId) {
-    console.error('Not Authorised', new Error('Invalid user, not allowed'));
+    console.error('Malformed cookie', new Error('Invalid user, not allowed'));
     throw new Error('Not Authorised');
   }
 
@@ -50,9 +50,6 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
   return next({
     ctx: {
       ...ctx,
-      user: {
-        id: user.id
-      },
       session: {
         destroy: ctx.session.destroy,
         save: ctx.session.save,

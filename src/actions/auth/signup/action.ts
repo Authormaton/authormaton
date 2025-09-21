@@ -3,7 +3,6 @@
 import { actionClient } from '@/lib/action';
 import { signup } from './logic';
 import { signupSchema } from './schema';
-import { getSession } from '@/lib/session';
 
 export const signupAction = actionClient
   .inputSchema(signupSchema)
@@ -12,18 +11,21 @@ export const signupAction = actionClient
     try {
       const result = await signup(parsedInput);
 
-      if (!result.success) {
-        throw new Error(result.error);
+      if (result.success) {
+        return result.data;
       }
 
       // Set session
-      const session = await getSession();
-      session.user = { id: result.data.id };
-      await session.save();
+      throw new Error(result.error, { cause: { internal: true } });
+    } catch (err) {
+      const error = err as Error;
+      const cause = error.cause as { internal: boolean } | undefined;
 
-      return result.data;
-    } catch (error) {
-      console.error('Signup error:', error);
-      throw new Error((error as Error).message, { cause: error });
+      if (cause?.internal) {
+        throw new Error(error.message, { cause: error });
+      }
+
+      console.error('Sign up error:', error);
+      throw new Error('Something went wrong');
     }
   });
