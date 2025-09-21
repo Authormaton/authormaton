@@ -26,19 +26,18 @@ export function ProjectCreateForm() {
   const { execute, isExecuting } = useAction(createProjectAction, {
     onSuccess: ({ data }) => {
       toast.success(`Create project ${data.title} successfully`);
+      form.reset();
     },
     onError: (error) => {
+      const fieldErrors = error.error.validationErrors?.fieldErrors;
       const errorMessage =
         error.error.serverError ??
-        (error.error.validationErrors?.fieldErrors
-          ? Object.entries(error.error.validationErrors.fieldErrors)
+        (fieldErrors
+          ? Object.entries(fieldErrors)
               .map(([key, value]) => `${key}: ${value}`)
               .join(', ')
           : 'An unknown error occurred');
       toast.error(errorMessage);
-    },
-    onSettled: () => {
-      form.reset();
     }
   });
 

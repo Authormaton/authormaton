@@ -36,8 +36,8 @@ export function FormInput<T extends FieldValues>({
           <FormLabel>
             {label} {required && <span className='text-red-500'>*</span>}
           </FormLabel>
-          <FormControl className='flex flex-row gap-2'>
-            <div>
+          <div className='flex flex-row gap-2'>
+            <FormControl>
               <Input
                 placeholder={placeholder}
                 {...field}
@@ -60,8 +60,8 @@ export function FormInput<T extends FieldValues>({
                 required={required}
               />
               {endComponent}
-            </div>
-          </FormControl>
+            </FormControl>
+          </div>
           {helperText && <div className='text-sm text-gray-500 dark:text-gray-400 my-1'>{helperText}</div>}
           <FormMessage />
         </FormItem>

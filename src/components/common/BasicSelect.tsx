@@ -30,6 +30,8 @@ export function BasicSelect({
   helperText,
   allowEmpty = false
 }: BasicSelectProps) {
+  const hasValue = Array.isArray(value) ? value.length > 0 : value !== null && value !== undefined && value !== '';
+
   // Multi-select logic
   // Single-select (existing logic)
   return (
@@ -42,12 +44,11 @@ export function BasicSelect({
       {helperText && <FormDescription>{helperText}</FormDescription>}
       <div className='relative'>
         <Select
-          required={required}
           disabled={disabled}
           onValueChange={onChange}
           value={value?.toString() ?? ''}
           onOpenChange={(isOpen) => {
-            if (!isOpen && !value && value !== null) {
+            if (!isOpen && !hasValue) {
               onChange(null);
             }
           }}
@@ -55,7 +56,7 @@ export function BasicSelect({
           <SelectTrigger
             className={cn(
               'bg-transparent hover:bg-transparent focus:ring-0 border-neutral-700/60 w-full dark:bg-neutral-900 dark:text-white dark:border-neutral-700',
-              allowEmpty && value && 'pr-12',
+              allowEmpty && hasValue && 'pr-12',
               className
             )}
           >
@@ -76,7 +77,7 @@ export function BasicSelect({
             </SelectGroup>
           </SelectContent>
         </Select>
-        {allowEmpty && value && (
+        {allowEmpty && hasValue && (
           <button
             type='button'
             onClick={(e) => {
