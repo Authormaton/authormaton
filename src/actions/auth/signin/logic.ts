@@ -16,9 +16,11 @@ type UserWithoutPassword = {
 export async function signin(input: SigninInput): Promise<Result<UserWithoutPassword>> {
   const { email, password } = input;
 
+  const normalisedEmail = email.trim().toLowerCase();
+
   // Find user by email
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: normalisedEmail },
     select: {
       id: true,
       name: true,
@@ -29,14 +31,14 @@ export async function signin(input: SigninInput): Promise<Result<UserWithoutPass
   });
 
   if (!user) {
-    console.error('Signin error: User not found', { email });
+    console.error('Signin error: User not found');
     return error('Invalid credentials');
   }
 
   // Verify password
   const isValidPassword = await bcryptjs.compare(password, user.password);
   if (!isValidPassword) {
-    console.error('Signin error: Invalid password', { email });
+    console.error('Signin error: Invalid password');
     return error('Invalid credentials');
   }
 

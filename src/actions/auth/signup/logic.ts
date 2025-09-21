@@ -26,7 +26,7 @@ export async function signup(input: SignupInput): Promise<Result<User>> {
   });
 
   if (existingUser) {
-    console.error('Signup error: User with this email already exists', { email });
+    console.error('Signup error: User with this email already exists');
     return error('Something went wrong');
   }
 
