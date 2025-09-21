@@ -2,9 +2,7 @@
  * Universal return type for server actions
  * Provides a consistent structure for success and error responses
  */
-export type Result<T> = 
-  | { data: T; success: true } 
-  | { success: false; error: string };
+export type Result<T> = { success: true; data: T } | { success: false; error: string };
 
 /**
  * Creates a success result with data
@@ -12,7 +10,7 @@ export type Result<T> =
 export function success<T>(data: T): Result<T> {
   return {
     data,
-    success: true,
+    success: true
   };
 }
 
@@ -22,6 +20,6 @@ export function success<T>(data: T): Result<T> {
 export function error<T>(message: string): Result<T> {
   return {
     success: false,
-    error: message,
+    error: message
   };
 }

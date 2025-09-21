@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Result, success, error } from '@/lib/result';
 import bcryptjs from 'bcryptjs';
 import { SigninInput } from './schema';
+import { getSession } from '@/lib/session';
 
 type UserWithoutPassword = {
   id: string;
@@ -15,35 +16,37 @@ type UserWithoutPassword = {
 export async function signin(input: SigninInput): Promise<Result<UserWithoutPassword>> {
   const { email, password } = input;
 
-  try {
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        password: true,
-        role: true
-      }
-    });
-
-    if (!user) {
-      return error('Invalid credentials');
+  // Find user by email
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      password: true,
+      role: true
     }
+  });
 
-    // Verify password
-    const isValidPassword = await bcryptjs.compare(password, user.password);
-    if (!isValidPassword) {
-      return error('Invalid credentials');
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = user;
-
-    return success(userWithoutPassword);
-  } catch (err) {
-    console.error('Sign-in error:', err);
-    return error('Internal server error');
+  if (!user) {
+    console.error('Signin error: User not found', { email });
+    return error('Invalid credentials');
   }
+
+  // Verify password
+  const isValidPassword = await bcryptjs.compare(password, user.password);
+  if (!isValidPassword) {
+    console.error('Signin error: Invalid password', { email });
+    return error('Invalid credentials');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _password, ...userWithoutPassword } = user;
+
+  // Set session
+  const session = await getSession();
+  session.user = { id: userWithoutPassword.id };
+  await session.save();
+
+  return success(userWithoutPassword);
 }

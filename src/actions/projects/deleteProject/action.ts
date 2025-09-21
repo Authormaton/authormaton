@@ -9,7 +9,7 @@ export const deleteProjectAction = authActionClient
   .inputSchema(deleteProjectSchema)
   .metadata({ actionName: 'deleteProject' })
   .action(async ({ parsedInput, ctx }) => {
-    const userId = ctx.user.id;
+    const userId = ctx.session.user.id;
     try {
       const existingProject = await prisma.project.findFirst({
         where: {
@@ -31,9 +31,16 @@ export const deleteProjectAction = authActionClient
         return deleteProjectResult.data;
       }
 
-      throw new Error(deleteProjectResult.error);
-    } catch (error) {
+      throw new Error(deleteProjectResult.error, { cause: { internal: true } });
+    } catch (err) {
+      const error = err as Error;
+      const cause = error.cause as { internal: boolean } | undefined;
+
+      if (cause?.internal) {
+        throw new Error(error.message);
+      }
+
       console.error('Project deletion error:', error, { userId });
-      throw new Error((error as Error).message, { cause: error });
+      throw new Error('Something went wrong');
     }
   });

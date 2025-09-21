@@ -1,8 +1,8 @@
 import 'server-only';
 
 import { prisma } from '@/lib/prisma';
-import { Result, success, error } from '@/lib/result';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { error, Result, success } from '@/lib/result';
+import { getSession } from '@/lib/session';
 import bcryptjs from 'bcryptjs';
 import { SignupInput } from './schema';
 
@@ -26,38 +26,32 @@ export async function signup(input: SignupInput): Promise<Result<User>> {
   });
 
   if (existingUser) {
-    return error('User with this email already exists');
+    console.error('Signup error: User with this email already exists', { email });
+    return error('Something went wrong');
   }
 
   // Hash password and create user
   const hashedPassword = await bcryptjs.hash(password, 12);
 
-  try {
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email: normalisedEmail,
-        password: hashedPassword,
-        tokens: 100 // Give new users 100 free tokens
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        tokens: true,
-        createdAt: true
-      }
-    });
-
-    return success(user);
-  } catch (err) {
-    // Handle Prisma unique constraint errors
-    if (err instanceof PrismaClientKnownRequestError && err.code === 'P2002') {
-      return error('User with this email already exists');
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email: normalisedEmail,
+      password: hashedPassword
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      tokens: true,
+      createdAt: true
     }
+  });
 
-    // Re-throw other errors
-    throw err;
-  }
+  const session = await getSession();
+  session.user = { id: user.id };
+  await session.save();
+
+  return success(user);
 }

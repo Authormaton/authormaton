@@ -1,3 +1,5 @@
+import 'server-only';
+
 const APP_ENV = (process.env.APP_ENV as 'development' | 'production') ?? 'production';
 
 const AUTH_SECRET = process.env.AUTH_SECRET as string;
