@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyJWT } from "@/lib/session";
+import { 
+  
+ } from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
   // Define protected routes
