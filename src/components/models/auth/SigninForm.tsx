@@ -48,10 +48,8 @@ export function SigninForm() {
     <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
       <Card className='w-full max-w-md'>
         <CardHeader className='space-y-1'>
-          <CardTitle className='text-2xl font-bold text-center'>Create your account</CardTitle>
-          <CardDescription className='text-center'>
-            Join Authormaton to start creating amazing content with AI
-          </CardDescription>
+          <CardTitle className='text-2xl font-bold text-center'>Welcome back</CardTitle>
+          <CardDescription className='text-center'>Sign in to access your Authormaton workspace</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(execute)}>
@@ -65,14 +63,7 @@ export function SigninForm() {
                 required
               />
 
-              <FormInput
-                control={form.control}
-                name='password'
-                type='password'
-                label='Password'
-                helperText='Password must be at least 8 characters long and include uppercase, lowercase, and a number.'
-                required
-              />
+              <FormInput control={form.control} name='password' type='password' label='Password' required />
             </CardContent>
 
             <CardFooter className='flex flex-col space-y-4'>
@@ -85,7 +76,7 @@ export function SigninForm() {
               </Button>
               <p className='text-center text-sm text-gray-600'>
                 Don&apos;t have an account?{' '}
-                <Link href='/auth/signup' className='text-primary'>
+                <Link href='/signup' className='text-primary'>
                   Sign up
                 </Link>
               </p>

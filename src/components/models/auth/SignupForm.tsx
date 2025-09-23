@@ -22,7 +22,8 @@ export function SignupForm() {
     defaultValues: {
       email: '',
       name: '',
-      password: ''
+      password: '',
+      termsAndConditions: false
     }
   });
 
