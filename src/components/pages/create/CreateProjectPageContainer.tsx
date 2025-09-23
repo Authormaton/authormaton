@@ -1,9 +1,9 @@
-import { ProjectCreateForm } from '@/components/models/projects/ProjectCreateForm';
+import { CreateProjectForm } from '@/components/models/projects/CreateProjectForm';
 
 export function CreateProjectPageContainer() {
   return (
     <div>
-      <ProjectCreateForm />
+      <CreateProjectForm />
     </div>
   );
 }

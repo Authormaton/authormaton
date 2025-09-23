@@ -12,7 +12,7 @@ import { createProjectAction } from '@/actions/projects/createProject/action';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
-export function ProjectCreateForm() {
+export function CreateProjectForm() {
   const form = useForm({
     mode: 'onChange',
     resolver: zodResolver(createProjectSchema),
@@ -31,6 +31,7 @@ export function ProjectCreateForm() {
     onError: (error) => {
       const fieldErrors = error.error.validationErrors?.fieldErrors;
       const errorMessage =
+        error.error.thrownError?.message ??
         error.error.serverError ??
         (fieldErrors
           ? Object.entries(fieldErrors)
