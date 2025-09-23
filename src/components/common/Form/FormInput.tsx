@@ -1,6 +1,7 @@
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { HTMLInputTypeAttribute } from 'react';
 
 export function FormInput<T extends FieldValues>({
   placeholder,
@@ -18,10 +19,10 @@ export function FormInput<T extends FieldValues>({
   max?: number; // Optional min value for number inputs
   step?: number; // Optional step value for number inputs
   label: string;
-  placeholder: string;
+  placeholder?: string;
   control: Control<T>;
   name: Path<T>;
-  type?: 'number' | 'text';
+  type?: HTMLInputTypeAttribute;
   required?: boolean;
   helperText?: string;
   endComponent?: React.ReactNode;
@@ -32,7 +33,7 @@ export function FormInput<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className='space-y-2'>
           <FormLabel>
             {label} {required && <span className='text-red-500'>*</span>}
           </FormLabel>
