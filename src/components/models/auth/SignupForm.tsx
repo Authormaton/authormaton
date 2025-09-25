@@ -6,12 +6,13 @@ import { FormCheckbox } from '@/components/common/Form/FormCheckbox';
 import { FormInput } from '@/components/common/Form/FormInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form } from '@/components/ui/form';
 import { toast } from '@/components/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAction } from 'next-safe-action/hooks';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Form, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 export function SignupForm() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export function SignupForm() {
     onSuccess: () => {
       toast.success('Signup successful');
       form.reset();
-      router.push('/dashboard');
+      router.push('/');
     },
     onError: (error) => {
       const fieldErrors = error.error.validationErrors?.fieldErrors;
