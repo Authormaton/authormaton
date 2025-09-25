@@ -5,11 +5,14 @@ import { LogOut } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { signoutAction } from '@/actions/auth/signout/action';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
+  const router = useRouter();
   const { execute, isExecuting } = useAction(signoutAction, {
     onSuccess: () => {
       toast.success('Signed out successfully');
+      router.push('/signin');
     },
     onError: (error) => {
       const errorMessage = error.error.thrownError?.message ?? error.error.serverError ?? 'Failed to sign out';

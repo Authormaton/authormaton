@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from './lib/session';
 
+const authPaths = ['/signin', '/signup'];
+
 export async function middleware(request: NextRequest) {
   const session = await getSession();
   const path = request.nextUrl.pathname;
 
-  if (!session.user?.id && !path.includes('/signin')) {
+  if (!session.user?.id && !authPaths.includes(path)) {
     const url = new URL('/signin', request.url);
     return NextResponse.redirect(url);
   }

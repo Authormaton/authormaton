@@ -6,7 +6,7 @@ export default async function SigninPage() {
   const session = await getSession();
 
   if (session.user?.id) {
-    redirect('/dashboard');
+    redirect('/');
   }
 
   return <SigninPageContainer />;
