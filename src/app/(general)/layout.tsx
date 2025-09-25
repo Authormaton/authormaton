@@ -1,4 +1,5 @@
 import { AppSidebar } from '@/components/common/Sidebar/AppSidebar';
+import { GeneralLayout } from '@/components/layouts/GeneralLayout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import React from 'react';
 
@@ -8,7 +9,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <SidebarProvider>
           <AppSidebar />
-          <main className='w-full'>{children}</main>
+          <main className='w-full'>
+            <GeneralLayout>{children}</GeneralLayout>
+          </main>
         </SidebarProvider>
       </body>
     </html>

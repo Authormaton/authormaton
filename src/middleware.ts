@@ -1,6 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from './lib/session';
 
-export async function middleware() {
+export async function middleware(request: NextRequest) {
+  const session = await getSession();
+  const path = request.nextUrl.pathname;
+
+  if (!session.user?.id && !path.includes('/signin')) {
+    const url = new URL('/signin', request.url);
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 
