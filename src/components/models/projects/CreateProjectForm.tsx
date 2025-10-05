@@ -50,10 +50,6 @@ export function CreateProjectForm() {
           control={form.control}
           items={[
             {
-              label: 'Post',
-              value: 'post'
-            },
-            {
               label: 'Article',
               value: 'article'
             },
@@ -62,8 +58,8 @@ export function CreateProjectForm() {
               value: 'ebook'
             },
             {
-              label: 'Script',
-              value: 'script'
+              label: 'Newsletter',
+              value: 'newsletter'
             }
           ]}
           name='type'

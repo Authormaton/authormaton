@@ -34,10 +34,9 @@ enum Role {
 }
 
 enum ProjectType {
-  post
   article
   ebook
-  script
+  newsletter
 }
 
 model Project {
