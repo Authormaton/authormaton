@@ -5,7 +5,7 @@ import { FormSelect } from '@/components/common/Form/FormSelect';
 import { Form } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createProjectSchema } from '@/actions/projects/createProject/schema';
+import { CreateProjectSchema, CreateProjectFormValues } from '@/lib/validations/projects';
 import { ProjectType } from '@/generated/prisma';
 import { useAction } from 'next-safe-action/hooks';
 import { createProjectAction } from '@/actions/projects/createProject/action';
@@ -13,13 +13,13 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 export function CreateProjectForm() {
-  const form = useForm({
+  const form = useForm<CreateProjectFormValues>({
     mode: 'onChange',
-    resolver: zodResolver(createProjectSchema),
+    resolver: zodResolver(CreateProjectSchema),
     reValidateMode: 'onChange',
     defaultValues: {
       title: '',
-      type: 'article' as ProjectType
+      type: ProjectType.article
     }
   });
 
@@ -29,15 +29,10 @@ export function CreateProjectForm() {
       form.reset();
     },
     onError: (error) => {
-      const fieldErrors = error.error.validationErrors?.fieldErrors;
       const errorMessage =
         error.error.thrownError?.message ??
         error.error.serverError ??
-        (fieldErrors
-          ? Object.entries(fieldErrors)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(', ')
-          : 'An unknown error occurred');
+        'An unknown error occurred';
       toast.error(errorMessage);
     }
   });
@@ -69,7 +64,7 @@ export function CreateProjectForm() {
         />
         <Button
           className='mt-4'
-          disabled={isExecuting || !form.formState.isValid || !form.formState.isDirty}
+          disabled={isExecuting || !form.formState.isValid}
           type='submit'
         >
           Create

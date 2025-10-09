@@ -1,7 +1,7 @@
 'use client';
 
 import { signinAction } from '@/actions/auth/signin/action';
-import { signinSchema } from '@/actions/auth/signin/schema';
+import { SigninSchema, SigninFormValues } from '@/lib/validations/auth';
 import { FormInput } from '@/components/common/Form/FormInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,8 +15,8 @@ import { useForm } from 'react-hook-form';
 
 export function SigninForm() {
   const router = useRouter();
-  const form = useForm({
-    resolver: zodResolver(signinSchema),
+  const form = useForm<SigninFormValues>({
+    resolver: zodResolver(SigninSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -32,15 +32,10 @@ export function SigninForm() {
       router.push('/');
     },
     onError: (error) => {
-      const fieldErrors = error.error.validationErrors?.fieldErrors;
       const errorMessage =
         error.error.thrownError?.message ??
         error.error.serverError ??
-        (fieldErrors
-          ? Object.entries(fieldErrors)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(', ')
-          : 'An unknown error occurred');
+        'An unknown error occurred';
       toast.error(errorMessage);
     }
   });
@@ -70,7 +65,7 @@ export function SigninForm() {
             <CardFooter className='flex flex-col space-y-4'>
               <Button
                 className='mt-4'
-                disabled={isExecuting || !form.formState.isValid || !form.formState.isDirty}
+                disabled={isExecuting || !form.formState.isValid}
                 type='submit'
               >
                 {isExecuting ? 'Signing in...' : 'Sign In'}
