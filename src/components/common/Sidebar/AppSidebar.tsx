@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible='icon' className='bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))]'>
+    <Sidebar className='flex h-full max-h-screen flex-col gap-2 bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))]'>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
