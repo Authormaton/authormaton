@@ -4,6 +4,8 @@ import { authActionClient } from '@/lib/action';
 import { deleteProject } from './logic';
 import { deleteProjectSchema } from './schema';
 import { prisma } from '@/lib/prisma';
+import { error, errorFromException, ErrorCodes } from '@/lib/result';
+import { toast } from '@/components/ui/sonner';
 
 export const deleteProjectAction = authActionClient
   .inputSchema(deleteProjectSchema)
@@ -22,7 +24,8 @@ export const deleteProjectAction = authActionClient
       });
 
       if (!existingProject) {
-        throw new Error('Project not found or you do not have permission to delete it');
+        toast.error('Project not found or you do not have permission to delete it');
+        return error('Project not found or you do not have permission to delete it', ErrorCodes.NOT_FOUND);
       }
 
       const deleteProjectResult = await deleteProject(parsedInput);
@@ -31,16 +34,11 @@ export const deleteProjectAction = authActionClient
         return deleteProjectResult.data;
       }
 
-      throw new Error(deleteProjectResult.error, { cause: { internal: true } });
+      toast.error(deleteProjectResult.error);
+      return error(deleteProjectResult.error, ErrorCodes.BAD_REQUEST);
     } catch (err) {
-      const error = err as Error;
-      const cause = error.cause as { internal: boolean } | undefined;
-
-      if (cause?.internal) {
-        throw new Error(error.message);
-      }
-
-      console.error('Project deletion error:', error, { userId });
-      throw new Error('Something went wrong');
+      console.error('Project deletion error:', err, { userId });
+      toast.error('Failed to delete project. Please try again.');
+      return errorFromException(err);
     }
   });

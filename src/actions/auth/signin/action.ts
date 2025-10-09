@@ -3,6 +3,8 @@
 import { actionClient } from '@/lib/action';
 import { signin } from './logic';
 import { signinSchema } from './schema';
+import { error, errorFromException, ErrorCodes } from '@/lib/result';
+import { toast } from '@/components/ui/sonner';
 
 export const signinAction = actionClient
   .inputSchema(signinSchema)
@@ -17,16 +19,11 @@ export const signinAction = actionClient
         return result.data;
       }
 
-      throw new Error(result.error, { cause: { internal: true } });
+      toast.error(result.error);
+      return error(result.error, ErrorCodes.BAD_REQUEST);
     } catch (err) {
-      const error = err as Error;
-      const cause = error.cause as { internal: boolean } | undefined;
-
-      if (cause?.internal) {
-        throw new Error(error.message, { cause: error });
-      }
-
-      console.error('Sign in error:', error, { email });
-      throw new Error('Something went wrong');
+      console.error('Sign in error:', err, { email });
+      toast.error('Failed to sign in. Please try again.');
+      return errorFromException(err);
     }
   });

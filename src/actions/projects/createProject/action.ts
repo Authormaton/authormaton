@@ -4,6 +4,8 @@ import { authActionClient } from '@/lib/action';
 import { createProject } from './logic';
 import { createProjectSchema } from './schema';
 import { revalidatePath } from 'next/cache';
+import { error, errorFromException, ErrorCodes } from '@/lib/result';
+import { toast } from '@/components/ui/sonner';
 
 export const createProjectAction = authActionClient
   .inputSchema(createProjectSchema)
@@ -18,16 +20,11 @@ export const createProjectAction = authActionClient
         return result.data;
       }
 
-      throw new Error(result.error, { cause: { internal: true } });
+      toast.error(result.error);
+      return error(result.error, ErrorCodes.BAD_REQUEST);
     } catch (err) {
-      const error = err as Error;
-      const cause = error.cause as { internal: boolean } | undefined;
-
-      if (cause?.internal) {
-        throw new Error(error.message);
-      }
-
-      console.error('Project creation error:', error, { userId });
-      throw new Error('Something went wrong');
+      console.error('Project creation error:', err, { userId });
+      toast.error('Failed to create project. Please try again.');
+      return errorFromException(err);
     }
   });
