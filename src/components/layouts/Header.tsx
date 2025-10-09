@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, User } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { signoutAction } from '@/actions/auth/signout/action';
 import { toast } from 'sonner';
@@ -29,7 +30,17 @@ export function Header() {
       <div>
         <h1 className='text-xl font-semibold text-gray-900 dark:text-white'>Authormaton</h1>
       </div>
-      <div>
+      <div className='flex items-center gap-2'>
+        <Link href='/profile'>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='flex items-center gap-2'
+          >
+            <User size={16} />
+            Profile
+          </Button>
+        </Link>
         <Button
           variant='outline'
           size='sm'

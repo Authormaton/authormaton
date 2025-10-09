@@ -60,3 +60,11 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
     }
   });
 });
+
+export async function getAuthenticatedUserId() {
+  const session = await getSession();
+  if (!session.user?.id) {
+    throw new Error("Not authenticated.");
+  }
+  return session.user.id;
+}
