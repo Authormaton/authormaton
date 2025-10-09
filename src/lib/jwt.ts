@@ -1,12 +1,12 @@
 
-import { IS_PRODUCTION } from './env';
+import { APP_ENV } from './env';
 
 export type JWTPayload = {
   userId: string;
 };
 
 export async function verifyJWT(token: string): Promise<JWTPayload> {
-  if (IS_PRODUCTION) {
+  if (APP_ENV === 'production') {
     throw new Error('verifyJWT should not be called in production in an Edge environment');
   }
   // This is a mock implementation for development and test environments
