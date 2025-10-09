@@ -15,7 +15,16 @@ export function Header() {
       router.push('/signin');
     },
     onError: (error) => {
-      const errorMessage = error.error.thrownError?.message ?? error.error.serverError ?? 'Failed to sign out';
+      const { serverError, validationErrors, thrownError } = error.error;
+      const fieldErrors = validationErrors?.fieldErrors;
+      const formErrors = validationErrors?.formErrors?.join(', ');
+      const fieldErrorMessage = fieldErrors
+        ? Object.entries(fieldErrors)
+            .map(([key, value]) => `${key}: ${value?.join(', ')}`)
+            .join(', ')
+        : undefined;
+
+      const errorMessage = serverError ?? formErrors ?? fieldErrorMessage ?? thrownError?.message ?? 'An unknown error occurred';
       toast.error(errorMessage);
     }
   });
