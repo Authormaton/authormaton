@@ -1,7 +1,7 @@
 'use client';
 
 import { signupAction } from '@/actions/auth/signup/action';
-import { signupSchema } from '@/actions/auth/signup/schema';
+import { SignupSchema, SignupFormValues } from '@/lib/validations/auth';
 import { FormCheckbox } from '@/components/common/Form/FormCheckbox';
 import { FormInput } from '@/components/common/Form/FormInput';
 import { Button } from '@/components/ui/button';
@@ -16,15 +16,14 @@ import { useForm } from 'react-hook-form';
 
 export function SignupForm() {
   const router = useRouter();
-  const form = useForm({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<SignupFormValues>({
+    resolver: zodResolver(SignupSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       email: '',
       name: '',
       password: '',
-      termsAndConditions: false
     }
   });
 
@@ -78,30 +77,12 @@ export function SignupForm() {
                 helperText='Password must be at least 8 characters long and include uppercase, lowercase, and a number.'
                 required
               />
-
-              <FormCheckbox
-                control={form.control}
-                name='termsAndConditions'
-                label={
-                  <span>
-                    I agree to the{' '}
-                    <Link href='/terms' className='text-primary'>
-                      Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link href='/privacy' className='text-primary'>
-                      Privacy Policy
-                    </Link>
-                  </span>
-                }
-                required
-              />
             </CardContent>
 
             <CardFooter className='flex flex-col space-y-4'>
               <Button
                 className='mt-4'
-                disabled={isExecuting || !form.formState.isValid || !form.formState.isDirty}
+                disabled={isExecuting || !form.formState.isValid}
                 type='submit'
               >
                 {isExecuting ? 'Signing up...' : 'Sign Up'}
