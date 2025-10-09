@@ -4,6 +4,8 @@ import { authActionClient } from '@/lib/action';
 import { updateProject } from './logic';
 import { updateProjectSchema } from './schema';
 import { prisma } from '@/lib/prisma';
+import { error, errorFromException, ErrorCodes } from '@/lib/result';
+import { toast } from '@/components/ui/sonner';
 
 export const updateProjectAction = authActionClient
   .inputSchema(updateProjectSchema)
@@ -24,7 +26,8 @@ export const updateProjectAction = authActionClient
       });
 
       if (!existingProject) {
-        throw new Error('Project not found or you do not have permission to delete it');
+        toast.error('Project not found or you do not have permission to update it');
+        return error('Project not found or you do not have permission to update it', ErrorCodes.NOT_FOUND);
       }
 
       const updateProjectResult = await updateProject(parsedInput);
@@ -33,16 +36,11 @@ export const updateProjectAction = authActionClient
         return updateProjectResult.data;
       }
 
-      throw new Error(updateProjectResult.error, { cause: { internal: true } });
+      toast.error(updateProjectResult.error);
+      return error(updateProjectResult.error, ErrorCodes.BAD_REQUEST);
     } catch (err) {
-      const error = err as Error;
-      const cause = error.cause as { internal: boolean } | undefined;
-
-      if (cause?.internal) {
-        throw new Error(error.message);
-      }
-
-      console.error('Project update error:', error, { userId });
-      throw new Error('Something went wrong');
+      console.error('Project update error:', err, { userId });
+      toast.error('Failed to update project. Please try again.');
+      return errorFromException(err);
     }
   });

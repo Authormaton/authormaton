@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { ToastProvider } from '@/components/providers/ToastProvider';
 
 export const metadata: Metadata = {
   title: 'Authormaton',
@@ -13,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body>{children}</body>
+      <body>
+        <ErrorBoundary>
+          {children}
+          <ToastProvider />
+        </ErrorBoundary>
+      </body>
     </html>
   );
 }
