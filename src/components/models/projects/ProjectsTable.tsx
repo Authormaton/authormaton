@@ -1,3 +1,5 @@
+"use client";
+
 import { FilterDropdown } from '@/components/common/Filter/FilterDropdown';
 import { SearchInput } from '@/components/common/Search/SearchInput';
 import { BasicTable } from '@/components/common/Table/BasicTable';
