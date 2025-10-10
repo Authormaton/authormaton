@@ -3,6 +3,8 @@ import { prisma } from './prisma';
 import { createSafeActionClient } from 'next-safe-action';
 import { headers } from 'next/headers';
 import * as zod from 'zod';
+import { UserRole } from '@prisma/client';
+import { hasProjectPermission } from './permissions';
 
 export function defineMetadataSchema() {
   return zod.object({
@@ -56,7 +58,41 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
         user: {
           id: userId
         }
+      },
+      user: user, // Add the full user object to the context
+    }
+  });
+});
+
+export const protectedAction = authActionClient.use(async ({ next, ctx, parsedInput }) => {
+  const { projectId, requiredRoles } = parsedInput as { projectId: string; requiredRoles: UserRole[] };
+
+  if (!projectId || !requiredRoles) {
+    // If projectId or requiredRoles are not provided, it's not a project-protected action
+    return next({
+      ctx: {
+        ...ctx,
       }
+    });
+  }
+
+  const projectMember = await prisma.projectMember.findUnique({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId: ctx.user.id,
+      },
+    },
+  });
+
+  if (!projectMember || !hasProjectPermission(projectMember.role, requiredRoles)) {
+    throw new Error('Not authorized to perform this action on this project.');
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      projectMember,
     }
   });
 });
