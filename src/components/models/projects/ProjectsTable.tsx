@@ -1,14 +1,22 @@
-"use client";
-
 import { FilterDropdown } from '@/components/common/Filter/FilterDropdown';
 import { SearchInput } from '@/components/common/Search/SearchInput';
+import { TableSkeleton } from '@/components/common/Skeleton/TableSkeleton';
 import { BasicTable } from '@/components/common/Table/BasicTable';
 import { Project } from '@/generated/prisma';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export function ProjectsTable({ projects }: { projects: Project[] }) {
+interface ProjectsTableProps {
+  projects: Project[];
+  loading: boolean;
+}
+
+export function ProjectsTable({ projects, loading }: ProjectsTableProps) {
   const isMobile = useIsMobile();
+
+  if (loading) {
+    return <TableSkeleton columns={3} />;
+  }
 
   return (
     <div className="flex flex-col gap-4">

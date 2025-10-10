@@ -2,7 +2,6 @@
 
 import { signupAction } from '@/actions/auth/signup/action';
 import { SignupSchema, SignupFormValues } from '@/lib/validations/auth';
-import { FormCheckbox } from '@/components/common/Form/FormCheckbox';
 import { FormInput } from '@/components/common/Form/FormInput';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';

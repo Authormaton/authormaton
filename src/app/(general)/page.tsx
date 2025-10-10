@@ -23,7 +23,7 @@ export default async function HomePage() {
     return <BasicAlert variant='destructive' title='Error loading projects' description={result.error} />;
   }
 
-  const projects = result.data;
+  const initialProjects = result.data;
 
-  return <HomePageContainer projects={projects} />;
+  return <HomePageContainer initialProjects={initialProjects} userId={userId} />;
 }

@@ -1,19 +1,19 @@
 
-import { prisma } from "@/lib/prisma";
-import { authActionClient } from "@/lib/action";
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
+// import { prisma } from "@/lib/prisma";
+// import { authActionClient } from "@/lib/action";
+// import { z } from "zod";
+// import { revalidatePath } from "next/cache";
 
-const updateProfileSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Username must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
-});
+// const updateProfileSchema = z.object({
+//   name: z
+//     .string()
+//     .min(2, {
+//       message: "Username must be at least 2 characters.",
+//     })
+//     .max(30, {
+//       message: "Username must not be longer than 30 characters.",
+//     }),
+// });
 
 /*
 export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }) => {
