@@ -5,7 +5,7 @@ export type JWTPayload = {
   userId: string;
 };
 
-export async function verifyJWT(token: string): Promise<JWTPayload> {
+export async function verifyJWT(_token: string): Promise<JWTPayload> {
   if (APP_ENV === 'production') {
     throw new Error('verifyJWT should not be called in production in an Edge environment');
   }
