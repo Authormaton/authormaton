@@ -27,28 +27,7 @@ export default async function HomePage() {
     return <BasicAlert variant="destructive" title="Error loading projects" description={projectsResult.error} />;
   }
 
-  if (analyticsError) {
-    return <BasicAlert variant="destructive" title="Error loading analytics" description={analyticsError.message} />;
-  }
+  const initialProjects = result.data;
 
-  if (!analyticsResult.success) {
-    return <BasicAlert variant="destructive" title="Error loading analytics" description={analyticsResult.error} />;
-  }
-
-  const projects = projectsResult.data;
-  const analytics = analyticsResult.data;
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-end">
-        <ExportDialog />
-      </div>
-      <ProjectStats
-        totalProjects={analytics.totalProjects}
-        projectsByStatus={analytics.projectsByStatus}
-        projectsByCreationMonth={analytics.projectsByCreationMonth}
-      />
-      <HomePageContainer projects={projects} />
-    </div>
-  );
+  return <HomePageContainer initialProjects={initialProjects} userId={userId} />;
 }
