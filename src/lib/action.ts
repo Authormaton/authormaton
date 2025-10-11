@@ -3,7 +3,7 @@ import { prisma } from './prisma';
 import { createSafeActionClient } from 'next-safe-action';
 import { headers } from 'next/headers';
 import * as zod from 'zod';
-import { UserRole } from '@prisma/client';
+import { Role } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
 
 export function defineMetadataSchema() {
@@ -65,7 +65,7 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
 });
 
 export const protectedAction = authActionClient.use(async ({ next, ctx, parsedInput }) => {
-  const { projectId, requiredRoles } = parsedInput as { projectId: string; requiredRoles: UserRole[] };
+  const { projectId, requiredRoles } = parsedInput as { projectId: string; requiredRoles: Role[] };
 
   if (!projectId || !requiredRoles) {
     // If projectId or requiredRoles are not provided, it's not a project-protected action
