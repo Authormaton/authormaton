@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { UserRole } from "@prisma/client";
+import { Role } from "@/generated/prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { BasicTable } from "@/components/common/Table/BasicTable";
@@ -15,7 +15,7 @@ interface ProjectMembersTableProps {
 
 interface ProjectMember {
   id: string;
-  role: UserRole;
+  role: Role;
   user: {
     id: string;
     name: string | null;
@@ -47,7 +47,7 @@ export function ProjectMembersTable({ projectId }: ProjectMembersTableProps) {
     }
   };
 
-  const handleUpdateRole = async (memberId: string, role: UserRole) => {
+  const handleUpdateRole = async (memberId: string, role: Role) => {
     const result = await updateMemberRole({ projectId, memberId, role });
     if (result.success) {
       toast.success(result.message);
@@ -83,10 +83,10 @@ export function ProjectMembersTable({ projectId }: ProjectMembersTableProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleUpdateRole(member.user.id, UserRole.ADMIN)}>
+              <DropdownMenuItem onClick={() => handleUpdateRole(member.user.id, Role.ADMIN)}>
                 Make Admin
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleUpdateRole(member.user.id, UserRole.MEMBER)}>
+              <DropdownMenuItem onClick={() => handleUpdateRole(member.user.id, Role.USER)}>
                 Make Member
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleRemoveMember(member.user.id)}>

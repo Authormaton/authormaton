@@ -1,13 +1,13 @@
-import { UserRole } from "@prisma/client";
+import { Role } from "@/generated/prisma/client";
 
-export function hasProjectPermission(userRole: UserRole, requiredRoles: UserRole[]): boolean {
+export function hasProjectPermission(userRole: Role, requiredRoles: Role[]): boolean {
   return requiredRoles.includes(userRole);
 }
 
-export function isProjectAdmin(userRole: UserRole): boolean {
-  return userRole === UserRole.ADMIN;
+export function isProjectAdmin(userRole: Role): boolean {
+  return userRole === Role.ADMIN;
 }
 
-export function isProjectMember(userRole: UserRole): boolean {
-  return userRole === UserRole.MEMBER || userRole === UserRole.ADMIN;
+export function isProjectMember(userRole: Role): boolean {
+  return userRole === Role.USER || userRole === Role.ADMIN;
 }

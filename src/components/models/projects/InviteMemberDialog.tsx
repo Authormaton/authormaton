@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { UserRole } from "@prisma/client";
+import { Role } from "@/generated/prisma/client";
 
 import { BasicDialog } from "@/components/common/Dialog/BasicDialog";
 import { FormInput } from "@/components/common/Form/FormInput";
@@ -22,7 +22,7 @@ export function InviteMemberDialog({ projectId, open, onOpenChange }: InviteMemb
     defaultValues: {
       projectId,
       email: "",
-      role: UserRole.MEMBER,
+      role: Role.USER,
     },
   });
 
@@ -51,7 +51,7 @@ export function InviteMemberDialog({ projectId, open, onOpenChange }: InviteMemb
             control={form.control}
             name="role"
             label="Role"
-            options={Object.values(UserRole).map((role) => ({ label: role, value: role }))}
+            options={Object.values(Role).map((role) => ({ label: role, value: role }))}
           />
           <Button type="submit" className="w-full">
             Invite
