@@ -5,8 +5,11 @@ import { Role } from "@/generated/prisma/client";
 
 export const inviteMemberSchema = z.object({
   projectId: z.string(),
+  email: z.string().email().nonempty(),
   role: z.nativeEnum(Role),
 });
+
+export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
 
 export const inviteMember = protectedAction(inviteMemberSchema, { projectId: (input) => input.projectId, requiredRoles: [Role.ADMIN] }, async ({ projectId, email, role }, { user }) => {
   // TODO: Implement actual invitation logic (e.g., send email, create invitation token)
