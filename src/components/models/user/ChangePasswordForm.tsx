@@ -10,6 +10,15 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { BasicAlert } from "@/components/common/BasicAlert";
 
+type ActionErrorShape = {
+  message?: string;
+  fieldErrors?: Record<string, string[]>;
+};
+
+function isActionError(e: unknown): e is ActionErrorShape {
+  return typeof e === "object" && e !== null && ("message" in e || "fieldErrors" in e);
+}
+
 const changePasswordFormSchema = z.object({
   currentPassword: z.string().min(6, {
     message: "Current password must be at least 6 characters.",
@@ -46,18 +55,23 @@ export function ChangePasswordForm() {
       await wrappedAction({ currentPassword: data.currentPassword, newPassword: data.newPassword });
       toast.success("Password changed successfully.");
       form.reset();
-    } catch (error: any) {
-      toast.error(error?.message ?? "Failed to change password.");
-      if (error?.fieldErrors && typeof error.fieldErrors === "object") {
-        for (const field of Object.keys(error.fieldErrors as Record<string, string[]>)) {
-          form.setError(field as keyof ChangePasswordFormValues, {
-            type: "server",
-            message: (error.fieldErrors as Record<string, string[]>)[field]?.[0],
-          });
+    } catch (err: unknown) {
+      if (isActionError(err)) {
+        toast.error(err.message ?? "Failed to change password.");
+        if (err.fieldErrors && typeof err.fieldErrors === "object") {
+          for (const field of Object.keys(err.fieldErrors)) {
+            form.setError(field as keyof ChangePasswordFormValues, {
+              type: "server",
+              message: err.fieldErrors[field]?.[0],
+            });
+          }
+          setFormError(null);
+        } else {
+          setFormError(err.message ?? "Something went wrong.");
         }
-        setFormError(null);
       } else {
-        setFormError(error?.message ?? "Something went wrong.");
+        toast.error("Failed to change password.");
+        setFormError("Something went wrong.");
       }
     }
   }
