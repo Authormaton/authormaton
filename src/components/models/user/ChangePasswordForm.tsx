@@ -4,6 +4,11 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useAction } from "@/hooks/use-action";
+import { changePassword } from "@/actions/user";
+import { toast } from "sonner";
+import { useState } from "react";
+import { BasicAlert } from "@/components/common/BasicAlert";
 
 const changePasswordFormSchema = z.object({
   currentPassword: z.string().min(6, {
@@ -23,6 +28,7 @@ const changePasswordFormSchema = z.object({
 type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
 
 export function ChangePasswordForm() {
+  const [formError, setFormError] = useState<string | null>(null);
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordFormSchema),
     defaultValues: {
@@ -32,12 +38,36 @@ export function ChangePasswordForm() {
     },
   });
 
+  const { runAction, isLoading } = useAction(changePassword, {
+    onSuccess: () => {
+      toast.success("Password changed successfully.");
+      form.reset();
+      setFormError(null);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      if (error.fieldErrors) {
+        for (const field in error.fieldErrors) {
+          form.setError(field as keyof ChangePasswordFormValues, {
+            type: "server",
+            message: error.fieldErrors[field]?.[0],
+          });
+        }
+        setFormError(null);
+      } else {
+        setFormError(error.message);
+      }
+    },
+  });
+
   function onSubmit(data: ChangePasswordFormValues) {
-    console.log(data); // TODO: Implement actual password change logic
+    setFormError(null);
+    runAction({ currentPassword: data.currentPassword, newPassword: data.newPassword });
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      {formError && <BasicAlert type="error" message={formError} />}
       <div className="grid gap-2">
         <Label htmlFor="currentPassword">Current Password</Label>
         <Input id="currentPassword" type="password" {...form.register("currentPassword")} />
@@ -65,7 +95,7 @@ export function ChangePasswordForm() {
           </p>
         )}
       </div>
-      <Button type="submit">Change password</Button>
+      <Button type="submit" disabled={isLoading}>Change password</Button>
     </form>
   );
 }
