@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { authActionClient } from "@/lib/action";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { getAuthenticatedUserId } from "@/lib/session";
+import { getAuthenticatedUserId } from "@/lib/action";
 import bcrypt from "bcryptjs";
 
 const updateProfileSchema = z.object({

@@ -38,36 +38,35 @@ export function ChangePasswordForm() {
     },
   });
 
-  const { runAction, isLoading } = useAction(changePassword, {
-    onSuccess: () => {
+  const { wrappedAction, isActionLoading } = useAction(changePassword);
+
+  async function onSubmit(data: ChangePasswordFormValues) {
+    setFormError(null);
+    try {
+      await wrappedAction({ currentPassword: data.currentPassword, newPassword: data.newPassword });
       toast.success("Password changed successfully.");
       form.reset();
-      setFormError(null);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-      if (error.fieldErrors) {
-        for (const field in error.fieldErrors) {
+    } catch (error: any) {
+      toast.error(error?.message ?? "Failed to change password.");
+      if (error?.fieldErrors && typeof error.fieldErrors === "object") {
+        for (const field of Object.keys(error.fieldErrors as Record<string, string[]>)) {
           form.setError(field as keyof ChangePasswordFormValues, {
             type: "server",
-            message: error.fieldErrors[field]?.[0],
+            message: (error.fieldErrors as Record<string, string[]>)[field]?.[0],
           });
         }
         setFormError(null);
       } else {
-        setFormError(error.message);
+        setFormError(error?.message ?? "Something went wrong.");
       }
-    },
-  });
-
-  function onSubmit(data: ChangePasswordFormValues) {
-    setFormError(null);
-    runAction({ currentPassword: data.currentPassword, newPassword: data.newPassword });
+    }
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      {formError && <BasicAlert type="error" message={formError} />}
+      {formError && (
+      <BasicAlert variant="destructive" title="Error" description={formError} />
+    )}
       <div className="grid gap-2">
         <Label htmlFor="currentPassword">Current Password</Label>
         <Input id="currentPassword" type="password" {...form.register("currentPassword")} />
@@ -95,7 +94,7 @@ export function ChangePasswordForm() {
           </p>
         )}
       </div>
-      <Button type="submit" disabled={isLoading}>Change password</Button>
+      <Button type="submit" disabled={isActionLoading}>Change password</Button>
     </form>
   );
 }
