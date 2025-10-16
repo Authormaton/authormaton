@@ -47,13 +47,13 @@ export const changePassword = authActionClient.schema(changePasswordSchema).acti
   });
 
   if (!user || !user.passwordHash) {
-    throw new Error("User not found or password not set.");
+    throw new Error("User not found or password not configured.");
   }
 
   const passwordMatch = await bcrypt.compare(parsedInput.currentPassword, user.passwordHash);
 
   if (!passwordMatch) {
-    throw new Error("Invalid current password.");
+    throw new Error("Incorrect current password.");
   }
 
   const hashedNewPassword = await bcrypt.hash(parsedInput.newPassword, 10);
