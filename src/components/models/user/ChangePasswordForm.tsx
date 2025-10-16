@@ -4,6 +4,20 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useAction } from "@/hooks/use-action";
+import { changePassword } from "@/actions/user";
+import { toast } from "sonner";
+import { useState } from "react";
+import { BasicAlert } from "@/components/common/BasicAlert";
+
+type ActionErrorShape = {
+  message?: string;
+  fieldErrors?: Record<string, string[]>;
+};
+
+function isActionError(e: unknown): e is ActionErrorShape {
+  return typeof e === "object" && e !== null && ("message" in e || "fieldErrors" in e);
+}
 
 const changePasswordFormSchema = z.object({
   currentPassword: z.string().min(6, {
@@ -23,6 +37,7 @@ const changePasswordFormSchema = z.object({
 type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
 
 export function ChangePasswordForm() {
+  const [formError, setFormError] = useState<string | null>(null);
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordFormSchema),
     defaultValues: {
@@ -32,12 +47,40 @@ export function ChangePasswordForm() {
     },
   });
 
-  function onSubmit(data: ChangePasswordFormValues) {
-    console.log(data); // TODO: Implement actual password change logic
+  const { wrappedAction, isActionLoading } = useAction(changePassword);
+
+  async function onSubmit(data: ChangePasswordFormValues) {
+    setFormError(null);
+    try {
+      await wrappedAction({ currentPassword: data.currentPassword, newPassword: data.newPassword });
+      toast.success("Password changed successfully.");
+      form.reset();
+    } catch (err: unknown) {
+      if (isActionError(err)) {
+        toast.error(err.message ?? "Failed to change password.");
+        if (err.fieldErrors && typeof err.fieldErrors === "object") {
+          for (const field of Object.keys(err.fieldErrors)) {
+            form.setError(field as keyof ChangePasswordFormValues, {
+              type: "server",
+              message: err.fieldErrors[field]?.[0],
+            });
+          }
+          setFormError(null);
+        } else {
+          setFormError(err.message ?? "Something went wrong.");
+        }
+      } else {
+        toast.error("Failed to change password.");
+        setFormError("Something went wrong.");
+      }
+    }
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      {formError && (
+      <BasicAlert variant="destructive" title="Error" description={formError} />
+    )}
       <div className="grid gap-2">
         <Label htmlFor="currentPassword">Current Password</Label>
         <Input id="currentPassword" type="password" {...form.register("currentPassword")} />
@@ -65,7 +108,7 @@ export function ChangePasswordForm() {
           </p>
         )}
       </div>
-      <Button type="submit">Change password</Button>
+      <Button type="submit" disabled={isActionLoading}>Change password</Button>
     </form>
   );
 }
