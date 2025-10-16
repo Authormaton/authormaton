@@ -32,10 +32,7 @@ export function SigninForm() {
       router.push('/');
     },
     onError: (error) => {
-      const errorMessage =
-        error.error.thrownError?.message ??
-        error.error.serverError ??
-        'An unknown error occurred';
+      const errorMessage = error.error.thrownError?.message ?? error.error.serverError ?? 'An unknown error occurred';
       toast.error(errorMessage);
     }
   });
@@ -63,11 +60,7 @@ export function SigninForm() {
             </CardContent>
 
             <CardFooter className='flex flex-col space-y-4'>
-              <Button
-                className='mt-4'
-                disabled={isExecuting || !form.formState.isValid}
-                type='submit'
-              >
+              <Button className='mt-4' disabled={isExecuting || !form.formState.isValid} type='submit'>
                 {isExecuting ? 'Signing in...' : 'Sign In'}
               </Button>
               <p className='text-center text-sm text-gray-600'>

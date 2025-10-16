@@ -1,4 +1,4 @@
-import { Role } from "@/generated/prisma/client";
+import { Role } from '@/generated/prisma/client';
 
 export function hasProjectPermission(userRole: Role, requiredRoles: Role[]): boolean {
   return requiredRoles.includes(userRole);

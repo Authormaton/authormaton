@@ -22,7 +22,7 @@ export function SignupForm() {
     defaultValues: {
       email: '',
       name: '',
-      password: '',
+      password: ''
     }
   });
 
@@ -79,11 +79,7 @@ export function SignupForm() {
             </CardContent>
 
             <CardFooter className='flex flex-col space-y-4'>
-              <Button
-                className='mt-4'
-                disabled={isExecuting || !form.formState.isValid}
-                type='submit'
-              >
+              <Button className='mt-4' disabled={isExecuting || !form.formState.isValid} type='submit'>
                 {isExecuting ? 'Signing up...' : 'Sign Up'}
               </Button>
               <p className='text-center text-sm text-gray-600'>

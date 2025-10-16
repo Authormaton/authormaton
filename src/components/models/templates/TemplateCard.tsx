@@ -24,7 +24,7 @@ export function TemplateCard({ template, onSelect, isSelected, className, ...pro
         <CardDescription>{template.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground line-clamp-3">{template.content || 'No initial content.'}</p>
+        <p className='text-sm text-muted-foreground line-clamp-3'>{template.content || 'No initial content.'}</p>
       </CardContent>
     </Card>
   );

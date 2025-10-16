@@ -17,10 +17,10 @@ export function CreateProjectDialog({ triggerButton }: { triggerButton: React.Re
       onOpenChange={setOpen}
       triggerButton={triggerButton}
     >
-      <div className="grid gap-4 py-4">
-        <h3 className="text-lg font-medium">Choose a Template</h3>
+      <div className='grid gap-4 py-4'>
+        <h3 className='text-lg font-medium'>Choose a Template</h3>
         <TemplateSelector onTemplateSelect={setSelectedTemplateId} selectedTemplateId={selectedTemplateId} />
-        <h3 className="text-lg font-medium">Project Details</h3>
+        <h3 className='text-lg font-medium'>Project Details</h3>
         <CreateProjectForm selectedTemplateId={selectedTemplateId} setDialogOpen={setOpen} />
       </div>
     </BasicDialog>

@@ -26,7 +26,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
     defaultValues: {
       title: '',
       type: ProjectType.article,
-      templateId: selectedTemplateId,
+      templateId: selectedTemplateId
     }
   });
 
@@ -43,10 +43,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
       form.reset();
       setDialogOpen(false);
     } else {
-      const errorMessage =
-        result.error.thrownError?.message ??
-        result.error.serverError ??
-        'An unknown error occurred';
+      const errorMessage = result.error.thrownError?.message ?? result.error.serverError ?? 'An unknown error occurred';
       toast.error(errorMessage);
     }
   };
@@ -57,7 +54,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
         <FormInput control={form.control} required label='Title' name='title' placeholder='N/A' />
         <FormSelect
           control={form.control}
@@ -80,11 +77,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
           label='Type'
           helperText='Select what sort of project you want to create'
         />
-        <Button
-          className='mt-4'
-          disabled={isActionLoading || !form.formState.isValid}
-          type='submit'
-        >
+        <Button className='mt-4' disabled={isActionLoading || !form.formState.isValid} type='submit'>
           Create
         </Button>
       </form>

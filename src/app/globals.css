@@ -1,6 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 :root {
   --radius: 0.65rem;
@@ -71,10 +70,8 @@
   --sidebar-ring: oklch(0.645 0.246 16.439);
 }
 
-
 @layer base {
   * {
     @apply border;
   }
 }
-

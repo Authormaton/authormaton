@@ -33,12 +33,14 @@ Before you begin, ensure you have the following installed:
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Authormaton/authormaton.git
    cd authormaton
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    # or
@@ -50,6 +52,7 @@ Before you begin, ensure you have the following installed:
    ```
 
 3. Set up your environment variables. Create a `.env.local` file in the root directory:
+
    ```env
    DATABASE_URL="postgresql://username:password@localhost:5432/authormaton"
    AUTH_SECRET="your-super-secret-key-at-least-32-characters-long"
@@ -57,6 +60,7 @@ Before you begin, ensure you have the following installed:
    ```
 
 4. Set up the database:
+
    ```bash
    npx prisma migrate dev
    ```

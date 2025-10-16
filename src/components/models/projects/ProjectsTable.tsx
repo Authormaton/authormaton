@@ -19,16 +19,16 @@ export function ProjectsTable({ projects, loading }: ProjectsTableProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <SearchInput placeholder="Search projects..." />
-        <div className="flex gap-2">
+    <div className='flex flex-col gap-4'>
+      <div className='flex items-center justify-between'>
+        <SearchInput placeholder='Search projects...' />
+        <div className='flex gap-2'>
           <FilterDropdown
-            paramName="type"
-            label="Type"
+            paramName='type'
+            label='Type'
             options={[
-              { label: "Fiction", value: "FICTION" },
-              { label: "Non-Fiction", value: "NON_FICTION" },
+              { label: 'Fiction', value: 'FICTION' },
+              { label: 'Non-Fiction', value: 'NON_FICTION' }
             ]}
           />
         </div>
@@ -50,16 +50,16 @@ export function ProjectsTable({ projects, loading }: ProjectsTableProps) {
           headers={[
             {
               field: 'title',
-              label: 'Title',
+              label: 'Title'
             },
             {
               field: 'type',
-              label: 'Type',
-            },
+              label: 'Type'
+            }
           ]}
           rows={projects.map((project) => ({
             id: project.id,
-            rows: [project.title, project.type],
+            rows: [project.title, project.type]
           }))}
         />
       )}

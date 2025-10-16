@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { ProjectsTable } from '@/components/models/projects/ProjectsTable';
 import { CreateProjectButton } from '@/components/models/projects/CreateProjectButton';
@@ -23,7 +23,7 @@ export function HomePageContainer({ initialProjects, userId }: HomePageContainer
         setProjects(result.data);
       } else {
         // Handle error, maybe show a toast or alert
-        console.error("Failed to fetch projects:", result.error);
+        console.error('Failed to fetch projects:', result.error);
       }
     };
     loadProjects();

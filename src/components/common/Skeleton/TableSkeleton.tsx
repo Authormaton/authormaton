@@ -1,5 +1,5 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface TableSkeletonProps {
   columns: number;
@@ -13,7 +13,7 @@ export function TableSkeleton({ columns, rows = 5 }: TableSkeletonProps) {
         <TableRow>
           {Array.from({ length: columns }).map((_, i) => (
             <TableHead key={i}>
-              <Skeleton className="h-6 w-full" />
+              <Skeleton className='h-6 w-full' />
             </TableHead>
           ))}
         </TableRow>
@@ -23,7 +23,7 @@ export function TableSkeleton({ columns, rows = 5 }: TableSkeletonProps) {
           <TableRow key={i}>
             {Array.from({ length: columns }).map((_, j) => (
               <TableCell key={j}>
-                <Skeleton className="h-6 w-full" />
+                <Skeleton className='h-6 w-full' />
               </TableCell>
             ))}
           </TableRow>
