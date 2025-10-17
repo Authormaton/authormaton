@@ -1,21 +1,19 @@
-
-
-import { prisma } from "@/lib/prisma";
-import { authActionClient } from "@/lib/action";
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
-import { getAuthenticatedUserId } from "@/lib/action";
-import bcrypt from "bcryptjs";
+import { prisma } from '@/lib/prisma';
+import { authActionClient } from '@/lib/action';
+import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+import { getAuthenticatedUserId } from '@/lib/action';
+import bcrypt from 'bcryptjs';
 
 const updateProfileSchema = z.object({
   name: z
     .string()
     .min(2, {
-      message: "Username must be at least 2 characters.",
+      message: 'Username must be at least 2 characters.'
     })
     .max(30, {
-      message: "Username must not be longer than 30 characters.",
-    }),
+      message: 'Username must not be longer than 30 characters.'
+    })
 });
 
 export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }) => {
@@ -23,46 +21,46 @@ export const updateProfile = authActionClient.schema(updateProfileSchema).action
 
   await prisma.user.update({
     where: { id: userId },
-    data: { name: parsedInput.name },
+    data: { name: parsedInput.name }
   });
 
-  revalidatePath("/profile");
+  revalidatePath('/profile');
   return { success: true };
 });
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(6, {
-    message: "Current password must be at least 6 characters.",
+    message: 'Current password must be at least 6 characters.'
   }),
   newPassword: z.string().min(6, {
-    message: "New password must be at least 6 characters.",
-  }),
+    message: 'New password must be at least 6 characters.'
+  })
 });
 
 export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }) => {
   const userId = await getAuthenticatedUserId();
 
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id: userId }
   });
 
   if (!user || !user.passwordHash) {
-    throw new Error("User not found or password not configured.");
+    throw new Error('User not found or password not configured.');
   }
 
   const passwordMatch = await bcrypt.compare(parsedInput.currentPassword, user.passwordHash);
 
   if (!passwordMatch) {
-    throw new Error("Incorrect current password.");
+    throw new Error('Incorrect current password.');
   }
 
   const hashedNewPassword = await bcrypt.hash(parsedInput.newPassword, 10);
 
   await prisma.user.update({
     where: { id: userId },
-    data: { passwordHash: hashedNewPassword },
+    data: { passwordHash: hashedNewPassword }
   });
 
-  revalidatePath("/profile");
+  revalidatePath('/profile');
   return { success: true };
 });

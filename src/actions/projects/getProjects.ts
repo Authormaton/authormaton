@@ -8,23 +8,19 @@ interface GetProjectsParams {
   type?: ProjectType;
 }
 
-export async function getProjects({
-  userId,
-  search,
-  type,
-}: GetProjectsParams): Promise<Result<Project[]>> {
+export async function getProjects({ userId, search, type }: GetProjectsParams): Promise<Result<Project[]>> {
   const projects = await prisma.project.findMany({
     where: {
       userId,
       ...(search && {
         title: {
           contains: search,
-          mode: "insensitive",
-        },
+          mode: 'insensitive'
+        }
       }),
-      ...(type && { type }),
+      ...(type && { type })
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: 'desc' }
   });
   return success(projects);
 }

@@ -59,7 +59,7 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
           id: userId
         }
       },
-      user: user, // Add the full user object to the context
+      user: user // Add the full user object to the context
     }
   });
 });
@@ -71,7 +71,7 @@ export const protectedAction = authActionClient.use(async ({ next, ctx, parsedIn
     // If projectId or requiredRoles are not provided, it's not a project-protected action
     return next({
       ctx: {
-        ...ctx,
+        ...ctx
       }
     });
   }
@@ -80,9 +80,9 @@ export const protectedAction = authActionClient.use(async ({ next, ctx, parsedIn
     where: {
       projectId_userId: {
         projectId,
-        userId: ctx.user.id,
-      },
-    },
+        userId: ctx.user.id
+      }
+    }
   });
 
   if (!projectMember || !hasProjectPermission(projectMember.role, requiredRoles)) {
@@ -92,7 +92,7 @@ export const protectedAction = authActionClient.use(async ({ next, ctx, parsedIn
   return next({
     ctx: {
       ...ctx,
-      projectMember,
+      projectMember
     }
   });
 });
@@ -100,7 +100,7 @@ export const protectedAction = authActionClient.use(async ({ next, ctx, parsedIn
 export async function getAuthenticatedUserId() {
   const session = await getSession();
   if (!session.user?.id) {
-    throw new Error("Not authenticated.");
+    throw new Error('Not authenticated.');
   }
   return session.user.id;
 }

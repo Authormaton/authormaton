@@ -32,10 +32,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     if (this.state.hasError) {
       // You can render any custom fallback UI
       return (
-        <div className="p-4">
+        <div className='p-4'>
           <BasicAlert
-            variant="destructive"
-            title="Something went wrong."
+            variant='destructive'
+            title='Something went wrong.'
             description={this.state.error?.message || 'An unexpected error occurred.'}
           />
         </div>

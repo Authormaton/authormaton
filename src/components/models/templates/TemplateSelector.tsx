@@ -8,7 +8,7 @@ interface TemplateSelectorProps {
 
 export function TemplateSelector({ onTemplateSelect, selectedTemplateId }: TemplateSelectorProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {projectTemplates.map((template) => (
         <TemplateCard
           key={template.id}

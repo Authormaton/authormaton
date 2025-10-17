@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { deleteProjectAction } from "@/actions/projects/deleteProject/action";
+import { deleteProjectAction } from '@/actions/projects/deleteProject/action';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { toast } from "@/components/ui/sonner";
-import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
+  DialogTitle
+} from '@/components/ui/dialog';
+import { toast } from '@/components/ui/sonner';
+import { useTransition } from 'react';
+import { Button } from '@/components/ui/button';
 
 interface DeleteProjectDialogProps {
   projectId: string;
@@ -26,7 +26,7 @@ export function DeleteProjectDialog({
   projectName,
   open,
   onOpenChange,
-  onSuccess,
+  onSuccess
 }: DeleteProjectDialogProps) {
   const [isPending, startTransition] = useTransition();
 
@@ -49,15 +49,16 @@ export function DeleteProjectDialog({
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete the
-            project &quot;{projectName}&quot; and remove its data from our
-            servers.
+            This action cannot be undone. This will permanently delete the project &quot;{projectName}&quot; and remove
+            its data from our servers.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>Cancel</Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
-            {isPending ? "Deleting..." : "Continue"}
+          <Button variant='outline' onClick={() => onOpenChange(false)} disabled={isPending}>
+            Cancel
+          </Button>
+          <Button variant='destructive' onClick={handleDelete} disabled={isPending}>
+            {isPending ? 'Deleting...' : 'Continue'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -25,7 +25,8 @@ export function Header() {
             .join(', ')
         : undefined;
 
-      const errorMessage = serverError ?? formErrors ?? fieldErrorMessage ?? thrownError?.message ?? 'An unknown error occurred';
+      const errorMessage =
+        serverError ?? formErrors ?? fieldErrorMessage ?? thrownError?.message ?? 'An unknown error occurred';
       toast.error(errorMessage);
     }
   });
@@ -41,11 +42,7 @@ export function Header() {
       </div>
       <div className='flex items-center gap-2'>
         <Link href='/profile'>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='flex items-center gap-2'
-          >
+          <Button variant='ghost' size='sm' className='flex items-center gap-2'>
             <User size={16} />
             Profile
           </Button>

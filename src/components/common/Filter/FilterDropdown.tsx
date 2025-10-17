@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,10 +8,10 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface FilterDropdownProps {
   paramName: string;
@@ -24,9 +24,7 @@ export function FilterDropdown({ paramName, label, options }: FilterDropdownProp
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const [selectedValue, setSelectedValue] = useState(
-    searchParams.get(paramName)?.toString() || "",
-  );
+  const [selectedValue, setSelectedValue] = useState(searchParams.get(paramName)?.toString() || '');
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -41,18 +39,15 @@ export function FilterDropdown({ paramName, label, options }: FilterDropdownProp
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="capitalize">
-          {label}: {selectedValue || "All"}
+        <Button variant='outline' className='capitalize'>
+          {label}: {selectedValue || 'All'}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={selectedValue}
-          onValueChange={setSelectedValue}
-        >
-          <DropdownMenuRadioItem value="">All</DropdownMenuRadioItem>
+        <DropdownMenuRadioGroup value={selectedValue} onValueChange={setSelectedValue}>
+          <DropdownMenuRadioItem value=''>All</DropdownMenuRadioItem>
           {options.map((option) => (
             <DropdownMenuRadioItem key={option.value} value={option.value}>
               {option.label}

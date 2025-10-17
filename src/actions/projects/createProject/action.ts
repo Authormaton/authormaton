@@ -16,7 +16,7 @@ export const createProjectAction = authActionClient
 
     let initialContent = '';
     if (templateId) {
-      const selectedTemplate = projectTemplates.find(template => template.id === templateId);
+      const selectedTemplate = projectTemplates.find((template) => template.id === templateId);
       if (selectedTemplate) {
         initialContent = selectedTemplate.content;
       }
