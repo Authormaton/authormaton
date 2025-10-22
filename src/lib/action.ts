@@ -1,7 +1,6 @@
 import { getSession } from './session';
 import { prisma } from './prisma';
 import { createSafeActionClient } from 'next-safe-action';
-import { headers } from 'next/headers';
 import * as zod from 'zod';
 import { Role } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
@@ -23,10 +22,9 @@ export const actionClient = createSafeActionClient({
    */
   .use(async ({ next }) => {
     const session = await getSession();
-    const headerList = headers();
 
     return next({
-      ctx: { session, headers: headerList }
+      ctx: { session }
     });
   });
 
