@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,15 +18,12 @@ const profileFormSchema = z.object({
     })
     .max(30, {
       message: 'Username must not be longer than 30 characters.'
-    }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.'
-  })
+    })
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-export function ProfileForm({ user }: { user?: { name?: string; email?: string } }) {
+export function ProfileForm({ user }: { user?: { name: string; email: string } }) {
   const { execute, isExecuting } = useAction(updateProfile, {
     onSuccess: () => {
       toast.success('Profile updated successfully!');
@@ -38,8 +37,7 @@ export function ProfileForm({ user }: { user?: { name?: string; email?: string }
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user?.name ?? '',
-      email: user?.email ?? ''
+      name: user?.name ?? ''
     }
   });
 
