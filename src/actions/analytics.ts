@@ -1,12 +1,11 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
 import { authActionClient } from '@/lib/action';
-import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { ProjectType } from '@/generated/prisma';
+import * as z from 'zod';
 
-const getProjectAnalyticsSchema = z.object({});
-
-export const getProjectAnalytics = authActionClient.schema(getProjectAnalyticsSchema).action(async ({ ctx }) => {
+export const getProjectAnalytics = authActionClient.schema(z.object({})).action(async ({ _parsedInput, _ctx }) => {
   const totalProjects = await prisma.project.count();
 
   const projectsByType = await prisma.project.groupBy({
