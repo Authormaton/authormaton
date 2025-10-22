@@ -1,16 +1,18 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { protectedAction } from '@/lib/action';
-import { ProjectStatus } from '@prisma/client';
+import { authActionClient } from '@/lib/action';
+import { z } from 'zod';
 
-export const getProjectAnalytics = protectedAction(async () => {
+const getProjectAnalyticsSchema = z.object({});
+
+export const getProjectAnalytics = authActionClient.schema(getProjectAnalyticsSchema).action(async ({ ctx }) => {
   const totalProjects = await prisma.project.count();
 
-  const projectsByStatus = await prisma.project.groupBy({
-    by: ['status'],
+  const projectsByType = await prisma.project.groupBy({
+    by: ['type'],
     _count: {
-      status: true
+      type: true
     }
   });
 
@@ -24,9 +26,9 @@ export const getProjectAnalytics = protectedAction(async () => {
     }
   });
 
-  const formattedProjectsByStatus = Object.values(ProjectStatus).map((status) => ({
-    name: status,
-    value: projectsByStatus.find((item) => item.status === status)?._count.status || 0
+  const formattedProjectsByType = Object.values(ProjectType).map((type) => ({
+    name: type,
+    value: projectsByType.find((item) => item.type === type)?._count.type || 0
   }));
 
   const formattedProjectsByCreationMonth = projectsByCreationMonth.map((item) => ({
@@ -36,7 +38,7 @@ export const getProjectAnalytics = protectedAction(async () => {
 
   return {
     totalProjects,
-    projectsByStatus: formattedProjectsByStatus,
+    projectsByType: formattedProjectsByType,
     projectsByCreationMonth: formattedProjectsByCreationMonth
   };
 });

@@ -21,7 +21,7 @@ const profileFormSchema = z.object({
     })
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema> & { email?: string };
 
 export function ProfileForm({ user }: { user?: { name: string; email: string } }) {
   const { execute, isExecuting } = useAction(updateProfile, {
@@ -37,7 +37,8 @@ export function ProfileForm({ user }: { user?: { name: string; email: string } }
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user?.name ?? ''
+      name: user?.name ?? '',
+      email: user?.email ?? ''
     }
   });
 
