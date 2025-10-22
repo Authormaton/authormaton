@@ -4,6 +4,9 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAction } from '@/hooks/use-action';
+import { toast } from 'sonner';
+import { updateProfile } from '@/actions/user';
 
 const profileFormSchema = z.object({
   name: z
@@ -21,17 +24,26 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-export function ProfileForm() {
+export function ProfileForm({ user }: { user: { name: string; email: string } }) {
+  const { execute, isLoading } = useAction(updateProfile, {
+    onSuccess: () => {
+      toast.success('Profile updated successfully!');
+    },
+    onError: error => {
+      toast.error(error);
+    }
+  });
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: '', // TODO: Populate with actual user data
-      email: '' // TODO: Populate with actual user data
+      name: user.name,
+      email: user.email
     }
   });
 
   function onSubmit(data: ProfileFormValues) {
-    console.log(data); // TODO: Implement actual update logic
+    execute(data);
   }
 
   return (
@@ -46,7 +58,7 @@ export function ProfileForm() {
         <Input id='email' type='email' {...form.register('email')} disabled />
         {form.formState.errors.email && <p className='text-sm text-red-500'>{form.formState.errors.email.message}</p>}
       </div>
-      <Button type='submit'>Update profile</Button>
+      <Button type='submit' disabled={isLoading}>Update profile</Button>
     </form>
   );
 }
