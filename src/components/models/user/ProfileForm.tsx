@@ -1,9 +1,14 @@
+'use client'
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAction } from 'next-safe-action/hooks';
+import { toast } from 'sonner';
+import { updateProfile } from '@/actions/user';
 
 const profileFormSchema = z.object({
   name: z
@@ -13,25 +18,32 @@ const profileFormSchema = z.object({
     })
     .max(30, {
       message: 'Username must not be longer than 30 characters.'
-    }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.'
-  })
+    })
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema> & { email?: string };
 
-export function ProfileForm() {
+export function ProfileForm({ user }: { user?: { name: string; email: string } }) {
+  const { execute, isExecuting } = useAction(updateProfile, {
+    onSuccess: () => {
+      toast.success('Profile updated successfully!');
+    },
+    onError: (error) => {
+      const message = typeof error === 'string' ? error : error?.message ?? 'Failed to update profile';
+      toast.error(message);
+    }
+  });
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: '', // TODO: Populate with actual user data
-      email: '' // TODO: Populate with actual user data
+      name: user?.name ?? '',
+      email: user?.email ?? ''
     }
   });
 
   function onSubmit(data: ProfileFormValues) {
-    console.log(data); // TODO: Implement actual update logic
+    execute(data);
   }
 
   return (
@@ -46,7 +58,7 @@ export function ProfileForm() {
         <Input id='email' type='email' {...form.register('email')} disabled />
         {form.formState.errors.email && <p className='text-sm text-red-500'>{form.formState.errors.email.message}</p>}
       </div>
-      <Button type='submit'>Update profile</Button>
+      <Button type='submit' disabled={isExecuting}>Update profile</Button>
     </form>
   );
 }

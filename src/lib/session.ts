@@ -1,3 +1,5 @@
+'use server';
+
 import { getIronSession, unsealData } from 'iron-session';
 import { cookies } from 'next/headers';
 import { cookieName, IS_PRODUCTION } from './constants';
