@@ -9,9 +9,8 @@ export type BasicSelectProps = {
   required?: boolean;
   label?: string;
   items: { label: string | ReactNode; value: string | number; disabled?: boolean }[];
-  // eslint-disable-next-line
-  onChange: (...event: any[]) => void;
-  value?: string | number | (string | number)[] | null;
+  onChange: (value: string | null) => void;
+  value?: string | number | null;
   disabled?: boolean;
   className?: string;
   helperText?: string;
