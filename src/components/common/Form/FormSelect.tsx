@@ -1,12 +1,11 @@
 'use client';
 
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Control } from 'react-hook-form';
+import { Control, FieldValues } from 'react-hook-form';
 import { BasicSelect } from '../BasicSelect';
 
-export type FormSelectProps = {
-  // eslint-disable-next-line
-  control: Control<any>;
+export type FormSelectProps<TFormValues extends FieldValues> = {
+  control: Control<TFormValues>;
   name: string;
   label?: string;
   placeholder?: string;
@@ -17,7 +16,7 @@ export type FormSelectProps = {
   required?: boolean;
 };
 
-export function FormSelect({
+export function FormSelect<TFormValues extends FieldValues>({
   control,
   name,
   label,
