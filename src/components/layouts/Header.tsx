@@ -44,37 +44,54 @@ export function Header() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const prevIsMobileMenuOpenRef = useRef(isMobileMenuOpen);
+
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isMobileMenuOpen) {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        mobileMenuButtonRef.current &&
+        !mobileMenuButtonRef.current.contains(event.target as Node)
+      ) {
         setIsMobileMenuOpen(false);
       }
     };
 
-    if (isMobileMenuOpen) {
+    const prevIsMobileMenuOpen = prevIsMobileMenuOpenRef.current;
+    prevIsMobileMenuOpenRef.current = isMobileMenuOpen;
+
+    if (isMobileMenuOpen && !prevIsMobileMenuOpen) { // Menu is opening
       document.addEventListener('keydown', handleEscape);
-      // Focus the first interactive element in the mobile menu
+      document.addEventListener('mousedown', handleClickOutside);
       const firstFocusableElement = mobileMenuRef.current?.querySelector(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       ) as HTMLElement;
       if (firstFocusableElement) {
         firstFocusableElement.focus();
       }
-    } else {
+    } else if (!isMobileMenuOpen && prevIsMobileMenuOpen) { // Menu is closing
       document.removeEventListener('keydown', handleEscape);
-      // Return focus to the button that opened the menu
-      if (mobileMenuButtonRef.current) {
-        mobileMenuButtonRef.current.focus();
-      }
+      document.removeEventListener('mousedown', handleClickOutside);
+      mobileMenuButtonRef.current?.focus();
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMobileMenuOpen]);
 
   return (
-    <header className='flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
+    <header className='relative flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
       <div>
         <h1 className='text-xl font-semibold text-gray-900 dark:text-white'>Authormaton</h1>
       </div>
@@ -104,6 +121,7 @@ export function Header() {
           ref={mobileMenuButtonRef}
           aria-expanded={isMobileMenuOpen}
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-controls="mobile-menu-panel"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </Button>
@@ -111,11 +129,12 @@ export function Header() {
 
       {isMobileMenuOpen && (
         <div
+          id="mobile-menu-panel"
           ref={mobileMenuRef}
           className='md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex flex-col items-start p-4 space-y-2 z-10'
         >
           <Link href='/profile'>
-            <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start'>
+            <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start' onClick={() => setIsMobileMenuOpen(false)}>
               <User size={16} />
               Profile
             </Button>
@@ -123,7 +142,7 @@ export function Header() {
           <Button
             variant='outline'
             size='sm'
-            onClick={handleSignout}
+            onClick={async () => { setIsMobileMenuOpen(false); await handleSignout(); }}
             disabled={isExecuting}
             className='flex items-center gap-2 w-full justify-start'
           >
