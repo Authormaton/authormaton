@@ -36,22 +36,17 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
   form.setValue('templateId', selectedTemplateId);
 
   const { wrappedAction } = useAction(createProjectAction);
-  const { isLoading, setLoading } = useLoading();
+  const { isLoading } = useLoading();
 
   const onSubmit = async (values: CreateProjectFormValues) => {
-    setLoading(true);
-    try {
-      const result = await wrappedAction({ ...values, templateId: selectedTemplateId });
-      if (result.success) {
-        toast.success(`Create project ${result.data.title} successfully`);
-        form.reset();
-        setDialogOpen(false);
-      } else {
-        const errorMessage = result.error.thrownError?.message ?? result.error.serverError ?? 'An unknown error occurred';
-        toast.error(errorMessage);
-      }
-    } finally {
-      setLoading(false);
+    const result = await wrappedAction({ ...values, templateId: selectedTemplateId });
+    if (result.success) {
+      toast.success(`Create project ${result.data.title} successfully`);
+      form.reset();
+      setDialogOpen(false);
+    } else {
+      const errorMessage = result.error.thrownError?.message ?? result.error.serverError ?? 'An unknown error occurred';
+      toast.error(errorMessage);
     }
   };
 
