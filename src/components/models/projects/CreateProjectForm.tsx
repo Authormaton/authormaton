@@ -12,6 +12,7 @@ import { useAction } from '@/hooks/use-action'; // Custom useAction
 import { createProjectAction } from '@/actions/projects/createProject/action';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { useLoading } from '@/contexts/LoadingContext';
 
 interface CreateProjectFormProps {
   selectedTemplateId: string;
@@ -34,21 +35,27 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
   // This ensures the form reflects the currently selected template in the dialog
   form.setValue('templateId', selectedTemplateId);
 
-  const { wrappedAction, isActionLoading } = useAction(createProjectAction);
+  const { wrappedAction } = useAction(createProjectAction);
+  const { isLoading, setLoading } = useLoading();
 
   const onSubmit = async (values: CreateProjectFormValues) => {
-    const result = await wrappedAction({ ...values, templateId: selectedTemplateId });
-    if (result.success) {
-      toast.success(`Create project ${result.data.title} successfully`);
-      form.reset();
-      setDialogOpen(false);
-    } else {
-      const errorMessage = result.error.thrownError?.message ?? result.error.serverError ?? 'An unknown error occurred';
-      toast.error(errorMessage);
+    setLoading(true);
+    try {
+      const result = await wrappedAction({ ...values, templateId: selectedTemplateId });
+      if (result.success) {
+        toast.success(`Create project ${result.data.title} successfully`);
+        form.reset();
+        setDialogOpen(false);
+      } else {
+        const errorMessage = result.error.thrownError?.message ?? result.error.serverError ?? 'An unknown error occurred';
+        toast.error(errorMessage);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (isActionLoading) {
+  if (isLoading) {
     return <FormSkeleton />;
   }
 
@@ -77,7 +84,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
           label='Type'
           helperText='Select what sort of project you want to create'
         />
-        <Button className='mt-4' disabled={isActionLoading || !form.formState.isValid} type='submit'>
+        <Button className='mt-4' disabled={isLoading || !form.formState.isValid} type='submit'>
           Create
         </Button>
       </form>
