@@ -48,5 +48,6 @@ model Project {
   user      User        @relation(fields: [userId], references: [id])
   userId    String
 
+  @@unique([userId, title])
   @@map("projects")
 }
