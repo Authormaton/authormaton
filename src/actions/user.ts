@@ -24,7 +24,7 @@ export const updateProfile = authActionClient.schema(updateProfileSchema).action
     data: { name: parsedInput.name }
   });
 
-  // revalidatePath('/profile');
+  revalidatePath('/profile');
   return { success: true };
 });
 
@@ -61,6 +61,6 @@ export const changePassword = authActionClient.schema(changePasswordSchema).acti
     data: { passwordHash: hashedNewPassword }
   });
 
-  // revalidatePath('/profile');
+  revalidatePath('/profile');
   return { success: true };
 });
