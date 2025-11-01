@@ -29,10 +29,10 @@ export function BasicDialog({
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
       <DialogContent
         className='sm:max-w-[425px] md:max-w-[1000px] dark:bg-neutral-900 dark:text-white dark:border-neutral-700'
-        aria-labelledby='basic-dialog-title' // Link to the dialog's title for accessibility
+        aria-labelledby='basic-dialog-title' /* Link to the dialog's title for accessibility */
       >
         <DialogHeader>
-          <DialogTitle id='basic-dialog-title' className='dark:text-white'> // Add ID for aria-labelledby
+          <DialogTitle id='basic-dialog-title' className='dark:text-white'> {/* Add ID for aria-labelledby */}
             {title}
           </DialogTitle>
           <DialogDescription className='dark:text-neutral-400'>{description}</DialogDescription>
