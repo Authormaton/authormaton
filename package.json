@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.16",
     "@types/node": "^20",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.37.0",

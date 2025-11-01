@@ -41,6 +41,8 @@ function Button({
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    'aria-pressed'?: boolean; // Added for toggle buttons
+    'aria-label'?: string; // Added for descriptive labels
   }) {
   const Comp = asChild ? Slot : 'button';
 
