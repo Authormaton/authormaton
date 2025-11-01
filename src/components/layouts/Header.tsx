@@ -91,7 +91,7 @@ export function Header() {
   }, [isMobileMenuOpen]);
 
   return (
-    <header className='relative flex justify-between items-center p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
+    <header className='relative flex justify-between items-center px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sm:px-6'>
       <div>
         <h1 className='text-xl font-semibold text-gray-900 dark:text-white'>Authormaton</h1>
       </div>
@@ -131,7 +131,7 @@ export function Header() {
         <div
           id="mobile-menu-panel"
           ref={mobileMenuRef}
-          className='md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex flex-col items-start p-4 space-y-2 z-10'
+          className='md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex flex-col items-start p-4 space-y-3 z-10'
         >
           <Link href='/profile'>
             <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start' onClick={() => setIsMobileMenuOpen(false)}>
