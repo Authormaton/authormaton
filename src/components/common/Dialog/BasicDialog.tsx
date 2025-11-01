@@ -27,9 +27,14 @@ export function BasicDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {triggerButton && <DialogTrigger asChild>{triggerButton}</DialogTrigger>}
-      <DialogContent className='sm:max-w-[425px] md:max-w-[1000px] dark:bg-neutral-900 dark:text-white dark:border-neutral-700'>
+      <DialogContent
+        className='sm:max-w-[425px] md:max-w-[1000px] dark:bg-neutral-900 dark:text-white dark:border-neutral-700'
+        aria-labelledby='basic-dialog-title' // Link to the dialog's title for accessibility
+      >
         <DialogHeader>
-          <DialogTitle className='dark:text-white'>{title}</DialogTitle>
+          <DialogTitle id='basic-dialog-title' className='dark:text-white'> // Add ID for aria-labelledby
+            {title}
+          </DialogTitle>
           <DialogDescription className='dark:text-neutral-400'>{description}</DialogDescription>
         </DialogHeader>
         {children}
