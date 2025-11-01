@@ -3,7 +3,7 @@
 import { getIronSession, unsealData } from 'iron-session';
 import { cookies } from 'next/headers';
 import { cookieName, IS_PRODUCTION } from './constants';
-import { AUTH_SECRET } from './env';
+import { AUTH_SECRET, getPublicEnv } from './env';
 import { NextRequest } from 'next/server';
 
 export type SessionData = {
@@ -21,6 +21,7 @@ const sessionOptions = {
   }
 };
 
+const API_URL = getPublicEnv().NEXT_PUBLIC_API_URL;
 export async function getSession() {
   const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
   return session;

@@ -9,4 +9,11 @@ if (!AUTH_SECRET || AUTH_SECRET.length < 32) {
   throw new Error('AUTH_SECRET must be set and at least 32 characters long');
 }
 
-export { APP_ENV, IS_PRODUCTION, AUTH_SECRET };
+function getPublicEnv() {
+  return {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+  };
+}
+
+export { APP_ENV, IS_PRODUCTION, AUTH_SECRET, getPublicEnv };
