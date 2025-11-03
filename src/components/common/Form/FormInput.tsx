@@ -1,21 +1,9 @@
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { HTMLInputTypeAttribute } from 'react';
+import React, { HTMLInputTypeAttribute, forwardRef, ElementRef } from 'react';
 
-export function FormInput<T extends FieldValues>({
-  placeholder,
-  control,
-  name,
-  label,
-  type = 'text',
-  required = false,
-  helperText,
-  endComponent,
-  min,
-  step,
-  max
-}: {
+interface FormInputProps<T extends FieldValues> {
   max?: number; // Optional min value for number inputs
   step?: number; // Optional step value for number inputs
   label: string;
@@ -27,7 +15,25 @@ export function FormInput<T extends FieldValues>({
   helperText?: string;
   endComponent?: React.ReactNode;
   min?: number; // Optional min value for number inputs
-}) {
+}
+
+export const FormInput = forwardRef<ElementRef<typeof Input>, FormInputProps<any>>(
+  (
+    {
+      placeholder,
+      control,
+      name,
+      label,
+      type = 'text',
+      required = false,
+      helperText,
+      endComponent,
+      min,
+      step,
+      max,
+    },
+    ref
+  ) => {
   return (
     <FormField
       control={control}
@@ -40,6 +46,7 @@ export function FormInput<T extends FieldValues>({
           <FormControl>
             <div className='flex flex-row gap-2'>
               <Input
+                ref={ref}
                 placeholder={placeholder}
                 {...field}
                 min={min}
