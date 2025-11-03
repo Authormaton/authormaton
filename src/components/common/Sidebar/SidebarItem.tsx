@@ -29,26 +29,36 @@ export const PathInfoRecord: Record<string, SidebarPathInfo> = {
 
 import React from 'react';
 
-export const SidebarItem = React.forwardRef<
-  HTMLLIElement,
-  { path: string; title: string; index: number; isActive: boolean; isFocusable: boolean; refCallback: (el: HTMLLIElement) => void }
->(
-  ({ path, title, index, isActive, isFocusable, refCallback }, ref) => {
-    const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
-    const { open } = useSidebar();
-    const tabIndex = isFocusable ? 0 : -1;
+export function SidebarItem({
+  path,
+  title,
+  index,
+  isActive,
+  isFocusable,
+  refCallback
+}: {
+  path: string;
+  title: string;
+  index: number;
+  isActive: boolean;
+  isFocusable: boolean;
+  refCallback: (el: HTMLLIElement) => void;
+}) {
+  const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
+  const { open } = useSidebar();
+  const tabIndex = isFocusable ? 0 : -1;
 
-    return (
-      <SidebarMenuItem
-        ref={el => refCallback(el as HTMLLIElement)}
-        key={title}
-        className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
-        tabIndex={tabIndex}
-        role="menuitem"
-        aria-current={isActive ? "page" : undefined}
-      >
-        <SidebarMenuButton asChild>
-          <a href={path}>
+  return (
+    <SidebarMenuItem
+      ref={el => refCallback(el as HTMLLIElement)}
+      key={title}
+      className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
+      tabIndex={tabIndex}
+      role="menuitem"
+      aria-current={isActive ? "page" : undefined}
+    >
+      <SidebarMenuButton asChild>
+        <a href={path}>
           {!open ? (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -63,12 +73,9 @@ export const SidebarItem = React.forwardRef<
               <Icon />
               <span>{title}</span>
             </>
-                    )}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              );
-              }
-            );
-            
-            SidebarItem.displayName = 'SidebarItem';
+          )}
+        </a>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}

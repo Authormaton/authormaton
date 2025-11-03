@@ -5,12 +5,13 @@ import * as zod from 'zod';
 import { Role, User } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
 
+type Session = Awaited<ReturnType<typeof getSession>>;
+
 interface InitialContext {
-  session: SessionData;
+  session: Session;
 }
 
 interface AuthenticatedContext extends InitialContext {
-  session: SessionData & { destroy: () => Promise<void>; save: () => Promise<void>; };
   user: User;
 }
 
@@ -65,18 +66,12 @@ export const authActionClient: AuthenticatedActionClient = actionClient.use(asyn
     throw new Error('Not Authorised');
   }
 
+  // set the user on the existing session rather than replacing it
+  ctx.session.user = { id: userId } as User; // adjust cast/shape to actual user type
+  await ctx.session.save?.(); // optional: persist session if necessary
+
   return next({
-    ctx: {
-      ...ctx,
-      session: {
-        destroy: ctx.session.destroy,
-        save: ctx.session.save,
-        user: {
-          id: userId
-        }
-      },
-      user: user! // Add the full user object to the context
-    }
+    ctx: { ...ctx, user: user! }
   });
 });
 

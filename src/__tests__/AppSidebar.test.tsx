@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AppSidebar } from '@/components/common/Sidebar/AppSidebar';
-import { PathInfoRecord } from '@/components/common/Sidebar/SidebarItem';
+
 import { usePathname } from 'next/navigation';
 
 // Mock next/navigation
