@@ -1,6 +1,6 @@
 import { getSession } from './session';
 import { prisma } from './prisma';
-import { createSafeActionClient } from 'next-safe-action';
+import { createSafeActionClient, SafeActionClient } from 'next-safe-action';
 import * as zod from 'zod';
 import { Role } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
@@ -28,7 +28,7 @@ export const actionClient = createSafeActionClient({
     });
   });
 
-export const authActionClient = actionClient.use(async ({ next, ctx }) => {
+export const authActionClient: SafeActionClient = actionClient.use(async ({ next, ctx }) => {
   const userId = ctx.session.user?.id;
 
   if (!userId) {
@@ -57,8 +57,8 @@ export const authActionClient = actionClient.use(async ({ next, ctx }) => {
           id: userId
         }
       },
-      user: user // Add the full user object to the context
-    }
+      user: user! // Add the full user object to the context
+    } as typeof ctx & { user: typeof user }
   });
 });
 

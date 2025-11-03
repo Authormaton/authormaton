@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { ProjectType } from '@/generated/prisma';
 import * as z from 'zod';
 
-export const getProjectAnalytics = authActionClient.schema(z.object({})).action(async ({ _parsedInput, _ctx }) => {
+export const getProjectAnalytics = authActionClient.action(async () => {
   const totalProjects = await prisma.project.count();
 
   const projectsByType = await prisma.project.groupBy({
