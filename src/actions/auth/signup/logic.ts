@@ -27,7 +27,7 @@ export async function signup(input: SignupInput): Promise<Result<User>> {
 
   if (existingUser) {
     console.error('Signup error: User with this email already exists');
-    return error('Something went wrong');
+    return error('This email is already registered. Please use a different email or sign in.');
   }
 
   // Hash password and create user

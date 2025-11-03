@@ -1,17 +1,17 @@
 import { z } from 'zod';
 
 export const signupSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.email('Invalid email format'),
+  name: z.string().min(1, 'Please enter your name.'),
+  email: z.string().email('Please enter a valid email address.'),
   termsAndConditions: z
     .boolean()
-    .refine((val) => val === true, { message: 'You must accept the terms and conditions' }),
+    .refine((val) => val === true, { message: 'Please accept the terms and conditions to continue.' }),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters long')
-    .regex(/(?=.*[a-z])/, 'Password must contain at least one lowercase letter')
-    .regex(/(?=.*[A-Z])/, 'Password must contain at least one uppercase letter')
-    .regex(/(?=.*\d)/, 'Password must contain at least one number')
+    .min(8, 'Password must be at least 8 characters.')
+    .regex(/(?=.*[a-z])/, 'Password must contain at least one lowercase letter.')
+    .regex(/(?=.*[A-Z])/, 'Password must contain at least one uppercase letter.')
+    .regex(/(?=.*\d)/, 'Password must contain at least one number.')
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
