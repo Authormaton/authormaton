@@ -3,7 +3,7 @@
 import { actionClient } from '@/lib/action';
 import { signin } from './logic';
 import { signinSchema } from './schema';
-import { error, errorFromException, ErrorCodes } from '@/lib/result';
+import { error, errorFromException, ErrorCodes, success } from '@/lib/result';
 import { toast } from '@/components/ui/sonner';
 
 export const signinAction = actionClient
@@ -16,7 +16,7 @@ export const signinAction = actionClient
       const result = await signin(parsedInput);
 
       if (result.success) {
-        return result.data;
+        return success(result.data);
       }
 
       toast.error(result.error);
