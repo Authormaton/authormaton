@@ -28,16 +28,25 @@ export const PathInfoRecord: Record<string, SidebarPathInfo> = {
   }
 };
 
-export function SidebarItem({ path, title }: { path: string; title: string }) {
-  const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
-  const pathname = usePathname();
-  const isActive = pathname === path || (path !== '/' && pathname.startsWith(`/${path.split('/')[1]}`));
-  const { open } = useSidebar();
+import React from 'react';
 
-  return (
-    <SidebarMenuItem key={title} className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}>
-      <SidebarMenuButton asChild>
-        <a href={path}>
+export const SidebarItem = React.forwardRef<HTMLLIElement, { path: string; title: string }>(
+  ({ path, title }, ref) => {
+    const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
+    const pathname = usePathname();
+    const isActive = pathname === path || (path !== '/' && pathname.startsWith(`/${path.split('/')[1]}`));
+    const { open } = useSidebar();
+
+    return (
+      <SidebarMenuItem
+        ref={ref}
+        key={title}
+        className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
+        tabIndex={-1}
+        role="menuitem"
+      >
+        <SidebarMenuButton asChild>
+          <a href={path}>
           {!open ? (
             <Tooltip>
               <TooltipTrigger asChild>
