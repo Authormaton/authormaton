@@ -57,7 +57,6 @@ export function AppSidebar() {
               {Object.entries(PathInfoRecord)
                 .filter(([, info]) => !info.hide)
                 .map(([path, info], index) => {
-                  const pathname = usePathname(); // Get pathname inside the map
                   const isActive = pathname === path || (path !== '/' && pathname.startsWith(`/${path.split('/')[1]}`));
                   return (
                     <SidebarItem

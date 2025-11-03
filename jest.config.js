@@ -1,13 +1,13 @@
 module.exports = {
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/node_modules/jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\.(ts|tsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(\@radix-ui|lucide-react|react-icons)).+'
+    '/node_modules/(?!( @radix-ui|lucide-react|react-icons)).+'
   ],
 };

@@ -1,11 +1,27 @@
-import { getSession } from './session';
+import { getSession, SessionData } from './session';
 import { prisma } from './prisma';
 import { createSafeActionClient, SafeActionClient } from 'next-safe-action';
 import * as zod from 'zod';
 import { Role, User } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
 
-type AuthenticatedActionClient = SafeActionClient<any, any, any, any, any, { session: any; user: User; }, any, any, any, any>;
+interface InitialContext {
+  session: SessionData;
+}
+
+interface AuthenticatedContext extends InitialContext {
+  session: SessionData & { destroy: () => Promise<void>; save: () => Promise<void>; };
+  user: User;
+}
+
+type AuthenticatedActionClient = SafeActionClient<
+  zod.ZodTypeAny,
+  zod.ZodObject<{ actionName: zod.ZodString }>,
+  InitialContext,
+  string,
+  'flattened',
+  AuthenticatedContext
+>;
 
 export function defineMetadataSchema() {
   return zod.object({

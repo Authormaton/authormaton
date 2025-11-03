@@ -16,7 +16,7 @@ jest.mock('@/components/common/Sidebar/SidebarItem', () => ({
     '/projects': { icon: () => null, title: 'Projects' },
     '/hidden': { icon: () => null, title: 'Hidden', hide: true },
   },
-  SidebarItem: jest.fn(({ title, isFocusable, refCallback, ...props }) => {
+  SidebarItem: jest.fn(({ title, isFocusable, refCallback, path, onClick, ...props }) => {
     return (
       <li
         data-testid={`sidebar-item-${title}`}
@@ -24,7 +24,9 @@ jest.mock('@/components/common/Sidebar/SidebarItem', () => ({
         ref={refCallback}
         {...props}
       >
-        {title}
+        <a href={path} data-testid={`sidebar-item-link-${title}`} onClick={onClick || (() => {})}>
+          {title}
+        </a>
       </li>
     );
   }),
@@ -97,32 +99,12 @@ describe('AppSidebar', () => {
 
   it('activates link on Enter key', () => {
     const mockClick = jest.fn();
-    // Mock SidebarItem to include an anchor tag with a mock click handler
-    jest.mock('@/components/common/Sidebar/SidebarItem', () => ({
-      PathInfoRecord: {
-        '/': { icon: () => null, title: 'Dashboard' },
-        '/projects': { icon: () => null, title: 'Projects' },
-      },
-      SidebarItem: jest.fn(({ title, isFocusable, refCallback, path, ...props }) => {
-        return (
-          <li
-            data-testid={`sidebar-item-${title}`}
-            tabIndex={isFocusable ? 0 : -1}
-            ref={refCallback}
-            {...props}
-          >
-            <a href={path} onClick={mockClick}>{title}</a>
-          </li>
-        );
-      }),
-    }));
-
+    (usePathname as jest.Mock).mockReturnValue('/'); // Ensure pathname is set for the test
     render(<AppSidebar />);
     const dashboardItem = screen.getByTestId('sidebar-item-Dashboard');
+    const dashboardLink = screen.getByTestId('sidebar-item-link-Dashboard');
+    dashboardLink.onclick = mockClick;
     fireEvent.keyDown(dashboardItem, { key: 'Enter' });
-    // Expect the mock click handler to have been called
-    // This test might need a more sophisticated mock for next/link or actual navigation
-    // For now, we'll assert that the event was prevented and the link's click was attempted
     expect(mockClick).toHaveBeenCalled();
   });
 });

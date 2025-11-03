@@ -63,9 +63,12 @@ export const SidebarItem = React.forwardRef<
               <Icon />
               <span>{title}</span>
             </>
-          )}
-        </a>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  );
-}
+                    )}
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+              }
+            );
+            
+            SidebarItem.displayName = 'SidebarItem';
