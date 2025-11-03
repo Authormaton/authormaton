@@ -23,7 +23,6 @@ export function useDebounce<T>(value: T, delay: number = 500, immediate: boolean
 
   useEffect(() => {
     if (immediate && initialCall.current) {
-      setDebouncedValue(value);
       initialCall.current = false;
       return;
     }
