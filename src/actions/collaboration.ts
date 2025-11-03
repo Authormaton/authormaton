@@ -11,10 +11,10 @@ export const inviteMemberSchema = z.object({
 
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
 
-export const inviteMember = protectedAction(
+export const inviteMember = protectedAction.action(
   inviteMemberSchema,
-  { projectId: (input) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, email, role }, { user }) => {
+  { projectId: (input: InviteMemberInput) => input.projectId, requiredRoles: [Role.ADMIN] },
+  async ({ projectId, email, role }: InviteMemberInput, { user }: { user: User }) => {
     // TODO: Implement actual invitation logic (e.g., send email, create invitation token)
     // For now, directly add the user if they exist
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -40,10 +40,10 @@ export const removeMemberSchema = z.object({
   memberId: z.string()
 });
 
-export const removeMember = protectedAction(
+export const removeMember = protectedAction.action(
   removeMemberSchema,
-  { projectId: (input) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, memberId }, { user }) => {
+  { projectId: (input: z.infer<typeof removeMemberSchema>) => input.projectId, requiredRoles: [Role.ADMIN] },
+  async ({ projectId, memberId }: z.infer<typeof removeMemberSchema>, { user }: { user: User }) => {
     await prisma.projectMember.delete({
       where: {
         projectId_userId: {
@@ -63,10 +63,10 @@ export const updateMemberRoleSchema = z.object({
   role: z.nativeEnum(Role)
 });
 
-export const updateMemberRole = protectedAction(
+export const updateMemberRole = protectedAction.action(
   updateMemberRoleSchema,
-  { projectId: (input) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, memberId, role }, { user }) => {
+  { projectId: (input: z.infer<typeof updateMemberRoleSchema>) => input.projectId, requiredRoles: [Role.ADMIN] },
+  async ({ projectId, memberId, role }: z.infer<typeof updateMemberRoleSchema>, { user }: { user: User }) => {
     await prisma.projectMember.update({
       where: {
         projectId_userId: {
