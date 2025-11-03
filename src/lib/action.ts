@@ -2,8 +2,10 @@ import { getSession } from './session';
 import { prisma } from './prisma';
 import { createSafeActionClient, SafeActionClient } from 'next-safe-action';
 import * as zod from 'zod';
-import { Role } from '@/generated/prisma/client';
+import { Role, User } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
+
+type AuthenticatedActionClient = SafeActionClient<any, any, any, any, any, { session: any; user: User; }, any, any, any, any>;
 
 export function defineMetadataSchema() {
   return zod.object({
@@ -28,7 +30,7 @@ export const actionClient = createSafeActionClient({
     });
   });
 
-export const authActionClient: SafeActionClient = actionClient.use(async ({ next, ctx }) => {
+export const authActionClient: AuthenticatedActionClient = actionClient.use(async ({ next, ctx }) => {
   const userId = ctx.session.user?.id;
 
   if (!userId) {
@@ -58,7 +60,7 @@ export const authActionClient: SafeActionClient = actionClient.use(async ({ next
         }
       },
       user: user! // Add the full user object to the context
-    } as typeof ctx & { user: typeof user }
+    }
   });
 });
 

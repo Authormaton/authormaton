@@ -18,7 +18,7 @@ import { useEffect, useState, useRef } from 'react';
  * const handleClick = useDebounce(() => console.log('Clicked!'), 1000, true);
  */
 export function useDebounce<T>(value: T, delay: number = 500, immediate: boolean = false): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(() => (immediate ? value : value));
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
   const initialCall = useRef(true);
 
   useEffect(() => {
