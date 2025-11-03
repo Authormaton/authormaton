@@ -42,7 +42,7 @@ export function SidebarItem({
   index: number;
   isActive: boolean;
   isFocusable: boolean;
-  refCallback: (el: HTMLLIElement) => void;
+  refCallback: (el: HTMLLIElement | null) => void;
 }) {
   const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
   const { open } = useSidebar();
@@ -50,7 +50,7 @@ export function SidebarItem({
 
   return (
     <SidebarMenuItem
-      ref={el => refCallback(el as HTMLLIElement)}
+      ref={refCallback}
       key={title}
       className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
       tabIndex={tabIndex}
