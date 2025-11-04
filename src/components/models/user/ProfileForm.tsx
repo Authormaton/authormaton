@@ -9,6 +9,7 @@ import * as z from 'zod';
 import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { updateProfile } from '@/actions/user';
+import { capitalize } from '@/lib/utils';
 
 const profileFormSchema = z.object({
   name: z
@@ -49,7 +50,7 @@ export function ProfileForm({ user }: { user?: { name: string; email: string } }
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
       <div className='grid gap-2'>
-        <Label htmlFor='name'>Name</Label>
+        <Label htmlFor='name'>{capitalize('name')}</Label>
         <Input id='name' {...form.register('name')} />
         {form.formState.errors.name && <p className='text-sm text-red-500'>{form.formState.errors.name.message}</p>}
       </div>
