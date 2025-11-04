@@ -1,11 +1,28 @@
-import { getSession } from './session';
+import { getSession, SessionData } from './session';
 import { prisma } from './prisma';
 import { createSafeActionClient, SafeActionClient } from 'next-safe-action';
 import * as zod from 'zod';
 import { Role, User } from '@/generated/prisma/client';
 import { hasProjectPermission } from './permissions';
 
-type AuthenticatedActionClient = SafeActionClient<any, any, any, any, any, { session: any; user: User; }, any, any, any, any>;
+type Session = Awaited<ReturnType<typeof getSession>>;
+
+interface InitialContext {
+  session: Session;
+}
+
+interface AuthenticatedContext extends InitialContext {
+  user: User;
+}
+
+type AuthenticatedActionClient = SafeActionClient<
+  zod.ZodTypeAny,
+  zod.ZodObject<{ actionName: zod.ZodString }>,
+  InitialContext,
+  string,
+  'flattened',
+  AuthenticatedContext
+>;
 
 export function defineMetadataSchema() {
   return zod.object({
@@ -49,18 +66,12 @@ export const authActionClient: AuthenticatedActionClient = actionClient.use(asyn
     throw new Error('Not Authorised');
   }
 
+  // set the user on the existing session rather than replacing it
+  ctx.session.user = { id: userId } as User; // adjust cast/shape to actual user type
+  await ctx.session.save?.(); // optional: persist session if necessary
+
   return next({
-    ctx: {
-      ...ctx,
-      session: {
-        destroy: ctx.session.destroy,
-        save: ctx.session.save,
-        user: {
-          id: userId
-        }
-      },
-      user: user! // Add the full user object to the context
-    }
+    ctx: { ...ctx, user: user! }
   });
 });
 

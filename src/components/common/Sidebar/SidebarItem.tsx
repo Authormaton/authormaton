@@ -5,7 +5,6 @@ import { SidebarMenuButton, useSidebar } from '@/components/ui/sidebar';
 import { SidebarMenuItem } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
 
 import { LayoutDashboard, LucideIcon } from 'lucide-react';
 import { FaProjectDiagram } from 'react-icons/fa';
@@ -28,14 +27,36 @@ export const PathInfoRecord: Record<string, SidebarPathInfo> = {
   }
 };
 
-export function SidebarItem({ path, title }: { path: string; title: string }) {
+import React from 'react';
+
+export function SidebarItem({
+  path,
+  title,
+  index,
+  isActive,
+  isFocusable,
+  refCallback
+}: {
+  path: string;
+  title: string;
+  index: number;
+  isActive: boolean;
+  isFocusable: boolean;
+  refCallback: (el: HTMLLIElement | null) => void;
+}) {
   const Icon = PathInfoRecord[path as keyof typeof PathInfoRecord].icon;
-  const pathname = usePathname();
-  const isActive = pathname === path || (path !== '/' && pathname.startsWith(`/${path.split('/')[1]}`));
   const { open } = useSidebar();
+  const tabIndex = isFocusable ? 0 : -1;
 
   return (
-    <SidebarMenuItem key={title} className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}>
+    <SidebarMenuItem
+      ref={refCallback}
+      key={title}
+      className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
+      tabIndex={tabIndex}
+      role="menuitem"
+      aria-current={isActive ? "page" : undefined}
+    >
       <SidebarMenuButton asChild>
         <a href={path}>
           {!open ? (

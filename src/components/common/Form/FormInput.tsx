@@ -17,7 +17,7 @@ interface FormInputProps<T extends FieldValues> {
   min?: number; // Optional min value for number inputs
 }
 
-export const FormInput = forwardRef<ElementRef<typeof Input>, FormInputProps<any>>(
+export const FormInput = forwardRef<ElementRef<typeof Input>, FormInputProps<FieldValues>>(
   (
     {
       placeholder,
@@ -77,3 +77,6 @@ export const FormInput = forwardRef<ElementRef<typeof Input>, FormInputProps<any
     />
   );
 }
+);
+
+FormInput.displayName = 'FormInput';
