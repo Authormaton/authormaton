@@ -3,25 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { SidebarItem } from '@/components/common/Sidebar/SidebarItem';
 import { useSidebar } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { LayoutDashboard, LucideIcon } from 'lucide-react';
-import { IconType } from 'react-icons/lib';
-
-export type SidebarPathInfo = {
-  icon: LucideIcon | IconType;
-  title: string;
-  hide?: boolean;
-};
-
-export const PathInfoRecord: Record<string, SidebarPathInfo> = {
-  '/': {
-    icon: LayoutDashboard,
-    title: 'Dashboard'
-  },
-  '/projects': {
-    icon: LayoutDashboard, // Using LayoutDashboard as a generic icon for testing
-    title: 'Projects'
-  }
-};
+import { SidebarPathInfo, PathInfoRecord } from '@/components/common/Sidebar/SidebarItem';
 
 // Mock useSidebar
 jest.mock('@/components/ui/sidebar', () => ({
