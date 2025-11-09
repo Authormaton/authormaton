@@ -56,6 +56,12 @@ export function SidebarItem({
       tabIndex={tabIndex}
       role="menuitem"
       aria-current={isActive ? "page" : undefined}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.currentTarget.querySelector('a')?.click();
+        }
+      }}
     >
       <SidebarMenuButton asChild>
         <a href={path}>
