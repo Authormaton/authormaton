@@ -3,7 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { SidebarItem } from '@/components/common/Sidebar/SidebarItem';
 import { useSidebar } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { SidebarPathInfo, PathInfoRecord } from '@/components/common/Sidebar/SidebarItem';
+import userEvent from '@testing-library/user-event';
+
 
 // Mock useSidebar
 jest.mock('@/components/ui/sidebar', () => ({
@@ -119,8 +120,8 @@ describe('SidebarItem', () => {
       </TooltipProvider>
     );
     // The title is inside the TooltipContent, which appears on hover.
-    // We need to interact with the trigger to make the tooltip content visible.
-    // For testing purposes, we can directly query for the content after rendering.
+    const tooltipTrigger = screen.getByRole('menuitem');
+    await userEvent.hover(tooltipTrigger);
     expect(await screen.findByText('Dashboard')).toBeInTheDocument();
   });
 });
