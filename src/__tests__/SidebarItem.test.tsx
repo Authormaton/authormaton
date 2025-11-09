@@ -1,8 +1,27 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SidebarItem, PathInfoRecord } from '@/components/common/Sidebar/SidebarItem';
+import { SidebarItem } from '@/components/common/Sidebar/SidebarItem';
 import { useSidebar } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { LayoutDashboard, LucideIcon } from 'lucide-react';
+import { IconType } from 'react-icons/lib';
+
+export type SidebarPathInfo = {
+  icon: LucideIcon | IconType;
+  title: string;
+  hide?: boolean;
+};
+
+export const PathInfoRecord: Record<string, SidebarPathInfo> = {
+  '/': {
+    icon: LayoutDashboard,
+    title: 'Dashboard'
+  },
+  '/projects': {
+    icon: LayoutDashboard, // Using LayoutDashboard as a generic icon for testing
+    title: 'Projects'
+  }
+};
 
 // Mock useSidebar
 jest.mock('@/components/ui/sidebar', () => ({
@@ -103,7 +122,7 @@ describe('SidebarItem', () => {
     expect(mockRefCallback).toHaveBeenCalledWith(screen.getByRole('menuitem'));
   });
 
-  it('renders tooltip when sidebar is closed', () => {
+  it('renders tooltip when sidebar is closed', async () => {
     (useSidebar as jest.Mock).mockReturnValue({ open: false });
     render(
       <TooltipProvider>
@@ -117,6 +136,9 @@ describe('SidebarItem', () => {
         />
       </TooltipProvider>
     );
-    expect(screen.getByText('Dashboard')).toBeInTheDocument(); // Title is still rendered inside tooltip trigger
+    // The title is inside the TooltipContent, which appears on hover.
+    // We need to interact with the trigger to make the tooltip content visible.
+    // For testing purposes, we can directly query for the content after rendering.
+    expect(await screen.findByText('Dashboard')).toBeInTheDocument();
   });
 });
