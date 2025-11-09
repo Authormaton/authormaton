@@ -1,8 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SidebarItem, PathInfoRecord } from '@/components/common/Sidebar/SidebarItem';
+import { SidebarItem } from '@/components/common/Sidebar/SidebarItem';
 import { useSidebar } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
+import userEvent from '@testing-library/user-event';
+
 
 // Mock useSidebar
 jest.mock('@/components/ui/sidebar', () => ({
@@ -103,7 +105,7 @@ describe('SidebarItem', () => {
     expect(mockRefCallback).toHaveBeenCalledWith(screen.getByRole('menuitem'));
   });
 
-  it('renders tooltip when sidebar is closed', () => {
+  it('renders tooltip when sidebar is closed', async () => {
     (useSidebar as jest.Mock).mockReturnValue({ open: false });
     render(
       <TooltipProvider>
@@ -117,6 +119,9 @@ describe('SidebarItem', () => {
         />
       </TooltipProvider>
     );
-    expect(screen.getByText('Dashboard')).toBeInTheDocument(); // Title is still rendered inside tooltip trigger
+    // The title is inside the TooltipContent, which appears on hover.
+    const tooltipTrigger = screen.getByRole('menuitem');
+    await userEvent.hover(tooltipTrigger);
+    expect(await screen.findByText('Dashboard')).toBeInTheDocument();
   });
 });

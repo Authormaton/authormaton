@@ -24,7 +24,7 @@ jest.mock('@/components/common/Sidebar/SidebarItem', () => ({
         ref={refCallback}
         {...props}
       >
-        <a href={path} data-testid={`sidebar-item-link-${title}`} onClick={onClick || (() => {})}>
+        <a href={path} data-testid={`sidebar-item-link-${title}`} onClick={onClick}>
           {title}
         </a>
       </li>
