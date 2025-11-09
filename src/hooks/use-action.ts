@@ -59,8 +59,8 @@ export function useAction<TInput, TOutput>(action?: ServerAction<TInput, TOutput
     // Set local and global loading states to true before action execution
     if (mounted.current) {
       setIsActionLoading(true);
+      setLoading(true);
     }
-    setLoading(true);
 
     try {
       // Execute the actual server action
@@ -73,8 +73,8 @@ export function useAction<TInput, TOutput>(action?: ServerAction<TInput, TOutput
       // Ensure loading states are reset after action completion, regardless of success or failure
       if (mounted.current) {
         setIsActionLoading(false);
+        setLoading(false);
       }
-      setLoading(false);
     }
   };
 
