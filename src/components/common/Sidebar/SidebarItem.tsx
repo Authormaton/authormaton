@@ -53,12 +53,9 @@ export function SidebarItem({
       ref={refCallback}
       key={title}
       className={cn(isActive && 'bg-gray-100 rounded-sm dark:bg-black')}
-      tabIndex={tabIndex}
-      role="menuitem"
-      aria-current={isActive ? "page" : undefined}
     >
       <SidebarMenuButton asChild>
-        <a href={path}>
+        <a href={path} tabIndex={tabIndex} aria-current={isActive ? "page" : undefined}>
           {!open ? (
             <Tooltip>
               <TooltipTrigger asChild>
