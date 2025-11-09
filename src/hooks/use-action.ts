@@ -33,7 +33,7 @@ type ServerAction<TInput, TOutput> = (input: TInput) => Promise<TOutput>;
  *   console.log(result?.message);
  * };
  */
-export function useAction<TInput, TOutput>(action: ServerAction<TInput, TOutput>) {
+export function useAction<TInput, TOutput>(action?: ServerAction<TInput, TOutput>) {
   // Local state to track if the specific action is loading
   const [isActionLoading, setIsActionLoading] = useState(false);
   // Access the global loading context setter
@@ -42,8 +42,6 @@ export function useAction<TInput, TOutput>(action: ServerAction<TInput, TOutput>
   const mounted = useRef(true);
 
   useEffect(() => {
-    // Set mounted ref to true on mount
-    mounted.current = true;
     // Set mounted ref to false on unmount
     return () => {
       mounted.current = false;

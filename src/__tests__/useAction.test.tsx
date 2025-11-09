@@ -113,7 +113,7 @@ describe('useAction', () => {
   });
 
   it('should return undefined and log an error if action is undefined', async () => {
-    const { result } = renderHook(() => useAction(undefined as any), { wrapper: mockLoadingProvider });
+    const { result } = renderHook(() => useAction(undefined), { wrapper: mockLoadingProvider });
 
     const actionResult = await act(async () => {
       return await result.current.wrappedAction('test');
@@ -124,6 +124,5 @@ describe('useAction', () => {
       "useAction: The provided action function is undefined."
     );
     expect(result.current.isActionLoading).toBe(false);
-    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 });

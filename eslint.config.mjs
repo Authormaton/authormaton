@@ -56,6 +56,12 @@ export default tseslint.config(
     }
   },
   {
+    files: ['jest-custom-environment.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off'
+    }
+  },
+  {
     ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'src/generated']
   }
 );
