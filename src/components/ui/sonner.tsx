@@ -9,6 +9,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme={'system'}
       className='toaster group'
+      role='status'
+      aria-live='polite'
       toastOptions={{
         classNames: {
           toast:
