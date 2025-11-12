@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FilterDropdown } from '@/components/common/Filter/FilterDropdown';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -53,7 +53,7 @@ describe('FilterDropdown', () => {
     expect(screen.queryByText('Active')).not.toBeInTheDocument();
   });
 
-  it('selects an option and updates the button text and URL', () => {
+  it('selects an option and updates the button text and URL', async () => {
     render(<FilterDropdown paramName={paramName} label={label} options={options} />);
     const triggerButton = screen.getByRole('button', { name: 'Status: All' });
 
@@ -64,10 +64,10 @@ describe('FilterDropdown', () => {
 
     const expectedParams = new URLSearchParams();
     expectedParams.set(paramName, 'active');
-    expect(mockReplace).toHaveBeenCalledWith(`/some-path?${expectedParams.toString()}`);
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(`/some-path?${expectedParams.toString()}`));
   });
 
-  it('selects "All" and removes the parameter from the URL', () => {
+  it('selects "All" and removes the parameter from the URL', async () => {
     // Simulate an initial selected value in the URL
     mockUseSearchParams.mockReturnValue(new URLSearchParams('status=active'));
 
@@ -80,7 +80,7 @@ describe('FilterDropdown', () => {
     expect(screen.getByRole('button', { name: 'Status: All' })).toBeInTheDocument();
 
     const expectedParams = new URLSearchParams(); // Empty params
-    expect(mockReplace).toHaveBeenCalledWith(`/some-path?${expectedParams.toString()}`);
+    await waitFor(() => expect(mockReplace).toHaveBeenCalledWith(`/some-path?${expectedParams.toString()}`));
   });
 
   it('initializes with a value from search params', () => {
