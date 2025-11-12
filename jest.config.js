@@ -5,9 +5,9 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.(ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!( @radix-ui|lucide-react|react-icons)).+'
+    '/node_modules/(?!( @radix-ui|lucide-react|react-icons|jest-environment-jsdom)).+'
   ],
 };
