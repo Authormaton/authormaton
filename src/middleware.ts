@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyJWT } from './lib/jwt';
 
 export async function middleware(request: NextRequest) {
+  // Skip authentication for Next.js internal paths
+  if (request.nextUrl.pathname.startsWith('/_next')) {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get('auth_token')?.value;
 
   if (token) {
