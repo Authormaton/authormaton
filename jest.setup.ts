@@ -1,11 +1,17 @@
 import '@testing-library/jest-dom';
 import { MOBILE_BREAKPOINT } from './src/lib/responsive';
 
+const matchMediaCache = new Map<string, any>();
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => {
+    if (matchMediaCache.has(query)) {
+      return matchMediaCache.get(query);
+    }
+
     const listeners: EventListener[] = [];
-    return {
+    const mql = {
       matches: window.innerWidth < MOBILE_BREAKPOINT,
       media: query,
       onchange: null,
@@ -27,5 +33,7 @@ Object.defineProperty(window, 'matchMedia', {
         return true;
       }),
     };
+    matchMediaCache.set(query, mql);
+    return mql;
   }),
 });

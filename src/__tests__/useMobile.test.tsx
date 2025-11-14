@@ -8,7 +8,7 @@ describe('useIsMobile', () => {
     window.dispatchEvent(new Event('resize'));
     // Manually trigger the 'change' event for the mocked matchMedia
     const mqList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    // @ts-ignore
+    // @ts-expect-error
     mqList.dispatchEvent(new Event('change'));
   };
 
