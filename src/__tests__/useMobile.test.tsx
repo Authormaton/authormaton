@@ -1,12 +1,15 @@
 import { renderHook, act } from '@testing-library/react';
 import { useIsMobile } from '../hooks/use-mobile';
-
-const MOBILE_BREAKPOINT = 768;
+import { MOBILE_BREAKPOINT } from '../lib/responsive';
 
 describe('useIsMobile', () => {
   const setWindowWidth = (width: number) => {
     Object.defineProperty(window, 'innerWidth', { writable: true, value: width });
     window.dispatchEvent(new Event('resize'));
+    // Manually trigger the 'change' event for the mocked matchMedia
+    const mqList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    // @ts-ignore
+    mqList.dispatchEvent(new Event('change'));
   };
 
   beforeEach(() => {
