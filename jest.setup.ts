@@ -4,7 +4,7 @@ import { MOBILE_BREAKPOINT } from './src/lib/responsive';
 interface MediaQueryListMock {
   matches: boolean;
   media: string;
-  onchange: ((this: MediaQueryList, ev: MediaQueryListEvent) => any) | null;
+  onchange: ((this: MediaQueryList, ev: MediaQueryListEvent) => void) | null;
   addEventListener: jest.Mock;
   removeEventListener: jest.Mock;
   dispatchEvent: jest.Mock;
