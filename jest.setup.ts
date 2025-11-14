@@ -1,7 +1,16 @@
 import '@testing-library/jest-dom';
 import { MOBILE_BREAKPOINT } from './src/lib/responsive';
 
-const matchMediaCache = new Map<string, any>();
+interface MediaQueryListMock {
+  matches: boolean;
+  media: string;
+  onchange: ((this: MediaQueryList, ev: MediaQueryListEvent) => any) | null;
+  addEventListener: jest.Mock;
+  removeEventListener: jest.Mock;
+  dispatchEvent: jest.Mock;
+}
+
+const matchMediaCache = new Map<string, MediaQueryListMock>();
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -11,7 +20,7 @@ Object.defineProperty(window, 'matchMedia', {
     }
 
     const listeners: EventListener[] = [];
-    const mql = {
+    const mql: MediaQueryListMock = {
       matches: window.innerWidth < MOBILE_BREAKPOINT,
       media: query,
       onchange: null,
