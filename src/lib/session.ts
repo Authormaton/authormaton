@@ -3,7 +3,7 @@
 import { getIronSession, unsealData } from 'iron-session';
 import { cookies } from 'next/headers';
 import { cookieName, IS_PRODUCTION } from './constants';
-import { AUTH_SECRET, getPublicEnv } from './env';
+import { getPublicEnv } from './env';
 import { NextRequest } from 'next/server';
 
 export type SessionData = {
@@ -12,8 +12,16 @@ export type SessionData = {
   };
 };
 
+function getAuthSecret(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error('AUTH_SECRET environment variable is not set.');
+  }
+  return secret;
+}
+
 const sessionOptions = {
-  password: AUTH_SECRET,
+  password: getAuthSecret(),
   cookieName: cookieName,
   cookieOptions: {
     secure: IS_PRODUCTION,
@@ -37,12 +45,18 @@ export async function getEdgeSession(request: NextRequest): Promise<SessionData>
     }
 
     const sessionData = await unsealData<SessionData>(cookie.value, {
-      password: AUTH_SECRET
+      password: getAuthSecret()
     });
 
-    return sessionData || {};
+    if (!sessionData) {
+      throw new Error('Malformed session data: unable to unseal.');
+    }
+
+    return sessionData;
   } catch (error) {
     console.error('Error getting edge session:', error);
+    // Depending on the desired behavior, you might re-throw or return a more specific error.
+    // For now, returning an empty session on error.
     return {};
   }
 }
