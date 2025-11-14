@@ -11,3 +11,5 @@ module.exports = {
     '/node_modules/(?!( @radix-ui|lucide-react|react-icons|jest-environment-jsdom)).+'
   ],
 };
+
+
