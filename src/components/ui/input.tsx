@@ -2,11 +2,19 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-interface InputProps extends React.ComponentProps<'input'> {
-  error?: boolean;
-}
+type InputProps = React.ComponentProps<'input'> &
+  (
+    | { 'aria-label'?: string; 'aria-labelledby'?: never }
+    | { 'aria-labelledby'?: string; 'aria-label'?: never }
+    | { 'aria-label'?: never; 'aria-labelledby'?: never }
+  ) & {
+    error?: boolean;
+  };
 
-function Input({ className, type, error, ...props }: InputProps) {
+function Input({ className, type, error, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby, ...props }: InputProps) {
+  if (ariaLabel && ariaLabelledby) {
+    console.warn('You should not provide both `aria-label` and `aria-labelledby`. Please choose one.');
+  }
   return (
     <input
       type={type}
@@ -18,6 +26,8 @@ function Input({ className, type, error, ...props }: InputProps) {
         className
       )}
       aria-invalid={error}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
       {...props}
     />
   );

@@ -7,9 +7,11 @@ import { useEffect, useState } from 'react';
 
 interface SearchInputProps {
   placeholder?: string;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 }
 
-export function SearchInput({ placeholder }: SearchInputProps) {
+export function SearchInput({ placeholder, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby }: SearchInputProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -33,6 +35,8 @@ export function SearchInput({ placeholder }: SearchInputProps) {
       value={searchValue}
       onChange={(e) => setSearchValue(e.target.value)}
       className='max-w-sm'
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
     />
   );
 }
