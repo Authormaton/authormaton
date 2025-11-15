@@ -4,9 +4,11 @@ import { cn } from '@/lib/utils';
 
 interface InputProps extends React.ComponentProps<'input'> {
   error?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 }
 
-function Input({ className, type, error, ...props }: InputProps) {
+function Input({ className, type, error, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby, ...props }: InputProps) {
   return (
     <input
       type={type}
@@ -18,6 +20,8 @@ function Input({ className, type, error, ...props }: InputProps) {
         className
       )}
       aria-invalid={error}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
       {...props}
     />
   );
