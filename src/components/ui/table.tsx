@@ -4,10 +4,52 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+function Table({ className, children, emptyMessage, colSpan, ...props }: React.ComponentProps<'table'> & { emptyMessage?: React.ReactNode; colSpan?: number }) {
+  let tableBodyChildren: React.ReactNode[] = [];
+  let tableHeaderChildren: React.ReactNode[] = [];
+  let hasTableBody = false;
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === TableBody) {
+      hasTableBody = true;
+      tableBodyChildren = React.Children.toArray(child.props.children);
+    }
+    if (React.isValidElement(child) && child.type === TableHeader) {
+      tableHeaderChildren = React.Children.toArray(child.props.children);
+    }
+  });
+
+  const isEmpty = hasTableBody && tableBodyChildren.length === 0;
+
+  let effectiveColSpan = colSpan;
+  if (emptyMessage && isEmpty && effectiveColSpan === undefined) {
+    // Try to infer colSpan from TableHead children
+    let headerRowChildren: React.ReactNode[] = [];
+    React.Children.forEach(tableHeaderChildren, (headerChild) => {
+      if (React.isValidElement(headerChild) && headerChild.type === TableRow) {
+        headerRowChildren = React.Children.toArray(headerChild.props.children);
+      }
+    });
+    effectiveColSpan = headerRowChildren.filter(c => React.isValidElement(c) && c.type === TableHead).length;
+    if (effectiveColSpan === 0) {
+      effectiveColSpan = 1; // Default to 1 if no headers found
+    }
+  }
+
   return (
     <div data-slot='table-container' className='relative w-full overflow-x-auto'>
-      <table data-slot='table' className={cn('w-full caption-bottom text-sm', className)} {...props} />
+      <table data-slot='table' className={cn('w-full caption-bottom text-sm', className)} {...props}>
+        {children}
+        {emptyMessage && isEmpty && (
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={effectiveColSpan} className='h-24 text-center'>
+                {emptyMessage}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        )}
+      </table>
     </div>
   );
 }
