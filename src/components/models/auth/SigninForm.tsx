@@ -32,15 +32,18 @@ export function SigninForm() {
       router.push('/');
     },
     onError: (error) => {
-      if (error.error.validationErrors) {
-        for (const [field, messages] of Object.entries(error.error.validationErrors)) {
-          form.setError(field as keyof SigninFormValues, {
-            type: 'server',
-            message: messages?.[0],
-          });
+      if (error.validationErrors) {
+        for (const [field, fieldObj] of Object.entries(error.validationErrors)) {
+          const messages = (fieldObj as { _errors: string[] })?._errors;
+          if (field in form.getValues() && Array.isArray(messages) && messages.length > 0) {
+            form.setError(field as keyof SigninFormValues, {
+              type: 'server',
+              message: messages[0],
+            });
+          }
         }
       } else {
-        const errorMessage = error.error.serverError ?? error.error.thrownError?.message ?? 'An unknown error occurred';
+        const errorMessage = error.serverError ?? error.fetchError ?? error.thrownError?.message ?? 'An unknown error occurred';
         toast.error(errorMessage);
       }
     }
