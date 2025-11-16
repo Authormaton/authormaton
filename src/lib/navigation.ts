@@ -1,5 +1,3 @@
-import { User, LogOut } from 'lucide-react';
-
 export type NavItem = {
   label: string;
   href?: string;

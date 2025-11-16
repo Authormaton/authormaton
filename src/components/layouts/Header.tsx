@@ -100,9 +100,19 @@ export function Header() {
       <div className='hidden md:flex items-center gap-2'>
         {navItems.map((item) => {
           const Icon = lucideIcons[item.icon];
+
+          if (!Icon || typeof Icon !== 'function') {
+            console.error(`Invalid icon component for item: ${item.label}`);
+            return null;
+          }
+
           if (item.type === 'link') {
+            if (!item.href) {
+              console.error(`Missing href for link item: ${item.label}`);
+              return null;
+            }
             return (
-              <Link key={item.label} href={item.href!}>
+              <Link key={item.label} href={item.href}>
                 <Button variant='ghost' size='sm' className='flex items-center gap-2'>
                   <Icon size={16} />
                   {item.label}
@@ -149,9 +159,19 @@ export function Header() {
         >
           {navItems.map((item) => {
             const Icon = lucideIcons[item.icon];
+
+            if (!Icon || typeof Icon !== 'function') {
+              console.error(`Invalid icon component for item: ${item.label}`);
+              return null;
+            }
+
             if (item.type === 'link') {
+              if (!item.href) {
+                console.error(`Missing href for link item: ${item.label}`);
+                return null;
+              }
               return (
-                <Link key={item.label} href={item.href!}>
+                <Link key={item.label} href={item.href}>
                   <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start' onClick={() => setIsMobileMenuOpen(false)}>
                     <Icon size={16} />
                     {item.label}
