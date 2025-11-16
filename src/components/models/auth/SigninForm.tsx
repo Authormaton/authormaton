@@ -32,8 +32,17 @@ export function SigninForm() {
       router.push('/');
     },
     onError: (error) => {
-      const errorMessage = error.error.thrownError?.message ?? error.error.serverError ?? 'An unknown error occurred';
-      toast.error(errorMessage);
+      if (error.error.validationErrors) {
+        for (const [field, messages] of Object.entries(error.error.validationErrors)) {
+          form.setError(field as keyof SigninFormValues, {
+            type: 'server',
+            message: messages?.[0],
+          });
+        }
+      } else {
+        const errorMessage = error.error.serverError ?? error.error.thrownError?.message ?? 'An unknown error occurred';
+        toast.error(errorMessage);
+      }
     }
   });
 
