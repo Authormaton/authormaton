@@ -15,7 +15,7 @@ interface AuthenticatedContext extends InitialContext {
   user: User;
 }
 
-type AuthenticatedActionClient = SafeActionClient<any, any, any, any, any, any>;
+type AuthenticatedActionClient = SafeActionClient<zod.ZodTypeAny, zod.ZodObject<{ actionName: zod.ZodString }>, InitialContext, string, 'flattened', AuthenticatedContext>;
 
 export function defineMetadataSchema() {
   return zod.object({

@@ -8,7 +8,7 @@ describe('useIsMobile', () => {
     window.dispatchEvent(new Event('resize'));
     // Manually trigger the 'change' event for the mocked matchMedia
     const mqList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    // @ts-expect-error
+    // @ts-expect-error: dispatchEvent is not directly available on MediaQueryList in TypeScript, but it is present at runtime for testing purposes.
     mqList.dispatchEvent(new Event('change'));
   };
 
