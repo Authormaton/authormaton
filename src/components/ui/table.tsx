@@ -4,10 +4,75 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+function Table({ className, children, emptyMessage, colSpan, ...props }: React.ComponentProps<'table'> & { emptyMessage?: React.ReactNode; colSpan?: number }) {
+  let tableBodyChildren: React.ReactNode[] = [];
+  let tableHeaderChildren: React.ReactNode[] = [];
+  let hasTableBody = false;
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && typeof child.type === 'function' && (child.type as React.FunctionComponent).displayName === 'TableBody') {
+      hasTableBody = true;
+      tableBodyChildren = tableBodyChildren.concat(React.Children.toArray(child.props.children));
+    }
+    if (React.isValidElement(child) && typeof child.type === 'function' && (child.type as React.FunctionComponent).displayName === 'TableHeader') {
+      tableHeaderChildren = React.Children.toArray(child.props.children);
+    }
+  });
+
+  const isEmpty = hasTableBody && tableBodyChildren.length === 0;
+
+  let effectiveColSpan = colSpan;
+  if (emptyMessage && isEmpty && effectiveColSpan === undefined) {
+    // Try to infer colSpan from TableHead children
+    let headerRowChildren: React.ReactNode[] = [];
+    React.Children.forEach(tableHeaderChildren, (headerChild) => {
+      if (React.isValidElement(headerChild) && typeof headerChild.type === 'function' && (headerChild.type as React.FunctionComponent).displayName === 'TableRow') {
+        headerRowChildren = React.Children.toArray(headerChild.props.children);
+      }
+    });
+    effectiveColSpan = headerRowChildren.reduce((sum, headerChild) => {
+      if (React.isValidElement(headerChild) && typeof headerChild.type === 'function' && (headerChild.type as React.FunctionComponent).displayName === 'TableHead') {
+        return sum + (Number(headerChild.props.colSpan) || 1);
+      }
+      return sum;
+    }, 0);
+    if (effectiveColSpan === 0) {
+      effectiveColSpan = 1; // Default to 1 if no headers found
+    }
+  }
+
+  const emptyRow = (
+    <TableRow>
+      <TableCell colSpan={effectiveColSpan} className='h-24 text-center'>
+        {emptyMessage}
+      </TableCell>
+    </TableRow>
+  );
+
+  let tableChildren = React.Children.toArray(children);
+  let hasInjectedEmptyRow = false;
+
+  if (emptyMessage && isEmpty) {
+    tableChildren = tableChildren.map((child) => {
+      if (React.isValidElement(child) && typeof child.type === 'function' && (child.type as React.FunctionComponent).displayName === 'TableBody') {
+        hasInjectedEmptyRow = true;
+        return React.cloneElement(child, {
+          children: React.Children.toArray(child.props.children).concat(emptyRow),
+        });
+      }
+      return child;
+    });
+
+    if (!hasInjectedEmptyRow) {
+      tableChildren.push(<TableBody key="empty-table-body">{emptyRow}</TableBody>);
+    }
+  }
+
   return (
     <div data-slot='table-container' className='relative w-full overflow-x-auto'>
-      <table data-slot='table' className={cn('w-full caption-bottom text-sm', className)} {...props} />
+      <table data-slot='table' className={cn('w-full caption-bottom text-sm', className)} {...props}>
+        {tableChildren}
+      </table>
     </div>
   );
 }
@@ -15,10 +80,12 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return <thead data-slot='table-header' className={cn('[&_tr]:border-b', className)} {...props} />;
 }
+TableHeader.displayName = 'TableHeader';
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return <tbody data-slot='table-body' className={cn('[&_tr:last-child]:border-0', className)} {...props} />;
 }
+TableBody.displayName = 'TableBody';
 
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
   return (
@@ -39,6 +106,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     />
   );
 }
+TableRow.displayName = 'TableRow';
 
 function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
@@ -52,6 +120,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     />
   );
 }
+TableHead.displayName = 'TableHead';
 
 function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (

@@ -14,7 +14,7 @@ export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
 export const inviteMember = protectedAction.action(
   inviteMemberSchema,
   { projectId: (input: InviteMemberInput) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, email, role }: InviteMemberInput, { user }: { user: User }) => {
+  async ({ input: { projectId, email, role }, ctx: { user } }) => {
     // TODO: Implement actual invitation logic (e.g., send email, create invitation token)
     // For now, directly add the user if they exist
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -43,7 +43,7 @@ export const removeMemberSchema = z.object({
 export const removeMember = protectedAction.action(
   removeMemberSchema,
   { projectId: (input: z.infer<typeof removeMemberSchema>) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, memberId }: z.infer<typeof removeMemberSchema>, { user }: { user: User }) => {
+  async ({ input: { projectId, memberId }, ctx: { user } }) => {
     await prisma.projectMember.delete({
       where: {
         projectId_userId: {
@@ -66,7 +66,7 @@ export const updateMemberRoleSchema = z.object({
 export const updateMemberRole = protectedAction.action(
   updateMemberRoleSchema,
   { projectId: (input: z.infer<typeof updateMemberRoleSchema>) => input.projectId, requiredRoles: [Role.ADMIN] },
-  async ({ projectId, memberId, role }: z.infer<typeof updateMemberRoleSchema>, { user }: { user: User }) => {
+  async ({ input: { projectId, memberId, role }, ctx: { user } }) => {
     await prisma.projectMember.update({
       where: {
         projectId_userId: {
@@ -90,7 +90,7 @@ export const getProjectMembersSchema = z.object({
 export const getProjectMembers = protectedAction(
   getProjectMembersSchema,
   { projectId: (input) => input.projectId, requiredRoles: [Role.USER, Role.ADMIN] },
-  async ({ projectId }, { user }) => {
+  async ({ input: { projectId }, ctx: { user } }) => {
     const members = await prisma.projectMember.findMany({
       where: { projectId },
       include: {
