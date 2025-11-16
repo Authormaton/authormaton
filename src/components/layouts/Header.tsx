@@ -2,7 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { LogOut, User, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import * as lucideIcons from 'lucide-react';
+import { navItems } from '@/lib/navigation';
 import { useAction } from 'next-safe-action/hooks';
 import { signoutAction } from '@/actions/auth/signout/action';
 import { toast } from 'sonner';
@@ -96,22 +98,34 @@ export function Header() {
         <h1 className='text-xl font-semibold text-gray-900 dark:text-white'>Authormaton</h1>
       </div>
       <div className='hidden md:flex items-center gap-2'>
-        <Link href='/profile'>
-          <Button variant='ghost' size='sm' className='flex items-center gap-2'>
-            <User size={16} />
-            Profile
-          </Button>
-        </Link>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={handleSignout}
-          disabled={isExecuting}
-          className='flex items-center gap-2'
-        >
-          <LogOut size={16} />
-          {isExecuting ? 'Signing out...' : 'Sign out'}
-        </Button>
+        {navItems.map((item) => {
+          const Icon = lucideIcons[item.icon];
+          if (item.type === 'link') {
+            return (
+              <Link key={item.label} href={item.href!}>
+                <Button variant='ghost' size='sm' className='flex items-center gap-2'>
+                  <Icon size={16} />
+                  {item.label}
+                </Button>
+              </Link>
+            );
+          } else if (item.type === 'button') {
+            return (
+              <Button
+                key={item.label}
+                variant='outline'
+                size='sm'
+                onClick={handleSignout}
+                disabled={isExecuting}
+                className='flex items-center gap-2'
+              >
+                <Icon size={16} />
+                {isExecuting ? 'Signing out...' : 'Sign out'}
+              </Button>
+            );
+          }
+          return null;
+        })}
       </div>
       <div className='md:hidden'>
         <Button
@@ -133,22 +147,34 @@ export function Header() {
           ref={mobileMenuRef}
           className='md:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex flex-col items-start p-4 space-y-3 z-10'
         >
-          <Link href='/profile'>
-            <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start' onClick={() => setIsMobileMenuOpen(false)}>
-              <User size={16} />
-              Profile
-            </Button>
-          </Link>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={async () => { setIsMobileMenuOpen(false); await handleSignout(); }}
-            disabled={isExecuting}
-            className='flex items-center gap-2 w-full justify-start'
-          >
-            <LogOut size={16} />
-            {isExecuting ? 'Signing out...' : 'Sign out'}
-          </Button>
+          {navItems.map((item) => {
+            const Icon = lucideIcons[item.icon];
+            if (item.type === 'link') {
+              return (
+                <Link key={item.label} href={item.href!}>
+                  <Button variant='ghost' size='sm' className='flex items-center gap-2 w-full justify-start' onClick={() => setIsMobileMenuOpen(false)}>
+                    <Icon size={16} />
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            } else if (item.type === 'button') {
+              return (
+                <Button
+                  key={item.label}
+                  variant='outline'
+                  size='sm'
+                  onClick={async () => { setIsMobileMenuOpen(false); await handleSignout(); }}
+                  disabled={isExecuting}
+                  className='flex items-center gap-2 w-full justify-start'
+                >
+                  <Icon size={16} />
+                  {isExecuting ? 'Signing out...' : 'Sign out'}
+                </Button>
+              );
+            }
+            return null;
+          })}
         </div>
       )}
     </header>
