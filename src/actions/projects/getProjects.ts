@@ -9,7 +9,7 @@ interface GetProjectsParams {
 }
 
 export async function getProjects({ userId, search, type }: GetProjectsParams): Promise<Result<Project[]>> {
-  const projects = await prisma.project.findMany({
+  const projects: Project[] = await prisma.project.findMany({
     where: {
       userId,
       ...(search && {
