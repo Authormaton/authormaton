@@ -421,6 +421,7 @@ function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'
 function SidebarMenu({ className, ...props }: React.ComponentProps<'ul'>) {
   return (
     <ul
+      role='menu'
       data-slot='sidebar-menu'
       data-sidebar='menu'
       className={cn('flex w-full min-w-0 flex-col gap-1', className)}
