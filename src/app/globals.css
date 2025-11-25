@@ -76,4 +76,31 @@
   * {
     @apply border;
   }
+
+  /* High-contrast focus-visible styles for interactive elements */
+  *:focus-visible {
+    outline: 2px solid oklch(0.645 0.246 16.439); /* Using --ring color for high contrast */
+    outline-offset: 2px;
+    border-color: oklch(0.645 0.246 16.439); /* Also apply to border for consistency */
+  }
+
+  /* Specific adjustments for buttons to ensure consistent focus styles */
+  button:focus-visible,
+  a[role="button"]:focus-visible,
+  input[type="button"]:focus-visible,
+  input[type="submit"]:focus-visible,
+  input[type="reset"]:focus-visible {
+    outline: 2px solid oklch(0.645 0.246 16.439); /* --ring color */
+    outline-offset: 2px;
+    border-color: oklch(0.645 0.246 16.439); /* --ring color */
+  }
+
+  /* Remove default outline for elements that will use focus-visible */
+  button,
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    outline: none;
+  }
 }
