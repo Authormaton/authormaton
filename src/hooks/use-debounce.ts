@@ -26,6 +26,7 @@ export function useDebounce<T>(value: T, delay: number = 500, immediate: boolean
   useEffect(() => {
     // If immediate is true and it's the initial render, skip debouncing
     if (immediate && initialCall.current) {
+      setDebouncedValue(value);
       initialCall.current = false;
       return;
     }
