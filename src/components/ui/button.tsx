@@ -49,13 +49,11 @@ const Button = React.forwardRef<
       data-slot='button'
       className={cn('cursor-pointer', buttonVariants({ variant, size, className }))}
       ref={ref}
-      role={asChild ? (role || 'button') : undefined}
+      role={role ?? (asChild ? 'button' : undefined)}
       {...props}
     />
   );
 });
 Button.displayName = 'Button';
-
-export { Button, buttonVariants };
 
 export { Button, buttonVariants };
