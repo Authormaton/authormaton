@@ -52,20 +52,76 @@ describe('useDebounce', () => {
     expect(result.current).toBe('d'); // Only the last value should be debounced
   });
 
-  it('should update immediately if immediate is true', () => {
+  it('should update immediately on the first change when immediate is true, then debounce subsequent changes', () => {
     const { result, rerender } = renderHook(({ value, delay, immediate }) => useDebounce(value, delay, immediate), {
       initialProps: { value: 'initial', delay: 500, immediate: true },
     });
 
+    // Initial render, value is 'initial'
     expect(result.current).toBe('initial');
 
-    rerender({ value: 'updated', delay: 500, immediate: true });
-    expect(result.current).toBe('initial'); // Should not update immediately on subsequent renders
+    // First change with immediate: true, should update immediately
+    rerender({ value: 'first change', delay: 500, immediate: true });
+    expect(result.current).toBe('first change');
+
+    // Subsequent change, should now debounce
+    rerender({ value: 'second change', delay: 500, immediate: true });
+    expect(result.current).toBe('first change'); // Still 'first change' immediately
+
+    act(() => {
+      jest.advanceTimersByTime(499);
+    });
+    expect(result.current).toBe('first change');
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(result.current).toBe('second change'); // 'second change' after debounce delay
+  });
+
+  it('should use default delay when delay is undefined', () => {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'initial', delay: undefined },
+    });
+
+    expect(result.current).toBe('initial');
+
+    rerender({ value: 'updated', delay: undefined });
+    expect(result.current).toBe('initial'); // Should not change immediately
+
+    act(() => {
+      jest.advanceTimersByTime(499);
+    });
+    expect(result.current).toBe('initial');
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(result.current).toBe('updated'); // Should update after default delay (500ms)
+  });
+
+  it('should handle null and undefined values correctly', () => {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: null, delay: 500 },
+    });
+
+    expect(result.current).toBe(null);
+
+    rerender({ value: 'test', delay: 500 });
+    expect(result.current).toBe(null);
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    expect(result.current).toBe('updated'); // Should update after delay for subsequent changes
+    expect(result.current).toBe('test');
+
+    rerender({ value: undefined, delay: 500 });
+    expect(result.current).toBe('test');
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+    expect(result.current).toBe(undefined);
   });
 
   it('should clear the timer on unmount', () => {
