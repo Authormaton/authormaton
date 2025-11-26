@@ -27,8 +27,10 @@ export function safeParseJWT(token: string | null | undefined): JWTParseResult {
   try {
     const payload = JSON.parse(atob(parts[1]));
     // Basic validation to ensure it looks like our JWTPayload
-    if (typeof payload === 'object' && payload !== null && 'userId' in payload) {
+    if (typeof payload === 'object' && payload !== null && 'userId' in payload && typeof payload.userId === 'string') {
       return { success: true, data: payload as JWTPayload };
+    } else if (typeof payload === 'object' && payload !== null && 'userId' in payload && typeof payload.userId !== 'string') {
+      return { success: false, error: 'Malformed token: userId must be a string.' };
     } else {
       return { success: false, error: 'Malformed token: payload does not contain userId.' };
     }
