@@ -12,7 +12,12 @@ const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const [isLoading, setLoading] = useState(false);
 
-  return <LoadingContext.Provider value={{ isLoading, setLoading }}>{children}</LoadingContext.Provider>;
+  const contextValue = React.useMemo(() => {
+    console.log('LoadingContext value re-created', { isLoading });
+    return { isLoading, setLoading };
+  }, [isLoading, setLoading]);
+
+  return <LoadingContext.Provider value={contextValue}>{children}</LoadingContext.Provider>;
 }
 
 export function useLoading() {
