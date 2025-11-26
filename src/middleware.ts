@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyJWT } from './lib/jwt';
+import { safeParseJWT } from './lib/jwt';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,8 +9,7 @@ export async function middleware(request: NextRequest) {
   // for publicly accessible files.
   if (
     pathname.startsWith('/_next') || // Next.js internal paths (e.g., /_next/static, /_next/image)
-    pathname.startsWith('/favicon.ico') || // Favicon
-    pathname.startsWith('/public') // Assets in the public directory
+    pathname.startsWith('/favicon.ico') // Favicon
   ) {
     return NextResponse.next();
   }
@@ -19,15 +18,11 @@ export async function middleware(request: NextRequest) {
 
   // If a token exists, attempt to verify it
   if (token) {
-    try {
-      await verifyJWT(token);
-      // If JWT is valid, allow the request to proceed to the intended destination.
-      // This means the user is authenticated and authorized for the requested resource.
+    const result = safeParseJWT(token);
+    if (result.success) {
       return NextResponse.next();
-    } catch (error: unknown) { // Explicitly type error as unknown
-      console.error('JWT verification failed:', error);
-      // If JWT is invalid or expired, redirect the user to the sign-in page.
-      // This ensures that users with invalid tokens cannot access protected content.
+    } else {
+      console.error('JWT verification failed:', result.error);
       return NextResponse.redirect(new URL('/signin', request.url));
     }
   }
