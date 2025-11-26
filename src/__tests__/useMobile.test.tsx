@@ -1,34 +1,49 @@
 import { renderHook, act } from '@testing-library/react';
 import { useIsMobile } from '../hooks/use-mobile';
-import { MOBILE_BREAKPOINT } from '../lib/responsive';
 
 describe('useIsMobile', () => {
+  let resizeObserverCb: ResizeObserverCallback;
+
+  class MockResizeObserver {
+    constructor(cb: ResizeObserverCallback) {
+      resizeObserverCb = cb;
+    }
+    observe = jest.fn();
+    disconnect = jest.fn();
+    unobserve = jest.fn();
+  }
+
+  beforeAll(() => {
+    // @ts-ignore
+    global.ResizeObserver = MockResizeObserver;
+  });
+
   const setWindowWidth = (width: number) => {
     Object.defineProperty(window, 'innerWidth', { writable: true, value: width });
-    window.dispatchEvent(new Event('resize'));
-    // Manually trigger the 'change' event for the mocked matchMedia
-    const mqList = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    // @ts-expect-error: dispatchEvent is not directly available on MediaQueryList in TypeScript, but it is present at runtime for testing purposes.
-    mqList.dispatchEvent(new Event('change'));
+    // Manually trigger the ResizeObserver callback
+    if (resizeObserverCb) {
+      act(() => {
+        resizeObserverCb([], {} as ResizeObserver); // Pass empty array and a mock observer
+      });
+    }
   };
 
   beforeEach(() => {
-    // Reset window.innerWidth before each test
     setWindowWidth(1024); // Default to a desktop width
   });
 
   it('should return true when window width is less than mobile breakpoint', () => {
-    setWindowWidth(MOBILE_BREAKPOINT - 1);
+    setWindowWidth(767);
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(true);
   });
 
   it('should return false when window width is greater than or equal to mobile breakpoint', () => {
-    setWindowWidth(MOBILE_BREAKPOINT);
+    setWindowWidth(768);
     const { result } = renderHook(() => useIsMobile());
     expect(result.current).toBe(false);
 
-    setWindowWidth(MOBILE_BREAKPOINT + 1);
+    setWindowWidth(769);
     const { result: result2 } = renderHook(() => useIsMobile());
     expect(result2.current).toBe(false);
   });
@@ -41,15 +56,11 @@ describe('useIsMobile', () => {
     expect(result.current).toBe(false);
 
     // Resize to mobile
-    act(() => {
-      setWindowWidth(MOBILE_BREAKPOINT - 1);
-    });
+    setWindowWidth(767);
     expect(result.current).toBe(true);
 
     // Resize back to desktop
-    act(() => {
-      setWindowWidth(MOBILE_BREAKPOINT);
-    });
+    setWindowWidth(768);
     expect(result.current).toBe(false);
   });
 
