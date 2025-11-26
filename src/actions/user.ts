@@ -21,13 +21,19 @@ const updateProfileSchema = z.object({
 export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }) => {
   const userId = await getAuthenticatedUserId();
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: { name: parsedInput.name }
-  });
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { name: parsedInput.name }
+    });
 
-  revalidatePath('/profile');
-  return { success: true };
+    revalidatePath('/profile');
+    return { success: true };
+  } catch (error) {
+    // Log the error for debugging purposes (optional, depending on logging setup)
+    console.error('Error updating profile:', error);
+    return { success: false, error: 'Failed to update profile. Please try again.' };
+  }
 });
 
 const changePasswordSchema = z.object({
@@ -42,27 +48,32 @@ const changePasswordSchema = z.object({
 export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }) => {
   const userId = await getAuthenticatedUserId();
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId }
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
 
-  if (!user || !user.passwordHash) {
-    throw new Error('User not found or password not configured.');
+    if (!user || !user.passwordHash) {
+      return { success: false, error: 'User not found or password not configured.' };
+    }
+
+    const passwordMatch = await bcrypt.compare(parsedInput.currentPassword, user.passwordHash);
+
+    if (!passwordMatch) {
+      return { success: false, error: 'Incorrect current password.' };
+    }
+
+    const hashedNewPassword = await bcrypt.hash(parsedInput.newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: hashedNewPassword }
+    });
+
+    revalidatePath('/profile');
+    return { success: true };
+  } catch (error) {
+    console.error('Error changing password:', error);
+    return { success: false, error: 'Failed to change password. Please try again.' };
   }
-
-  const passwordMatch = await bcrypt.compare(parsedInput.currentPassword, user.passwordHash);
-
-  if (!passwordMatch) {
-    throw new Error('Incorrect current password.');
-  }
-
-  const hashedNewPassword = await bcrypt.hash(parsedInput.newPassword, 10);
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: { passwordHash: hashedNewPassword }
-  });
-
-  revalidatePath('/profile');
-  return { success: true };
 });
