@@ -15,9 +15,10 @@ interface TabsProps {
   tabs: Tab[];
   className?: string;
   children: React.ReactNode;
+  onTabChange?: (id: string) => void;
 }
 
-export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
+export function Tabs({ activeTab, tabs, className, children, onTabChange }: TabsProps) {
   // Accessibility Note: This component provides keyboard navigation for tabs using ArrowLeft, ArrowRight, Home, and End keys,
   // along with appropriate ARIA roles and attributes for screen reader compatibility.
   const tabRefs = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
@@ -25,6 +26,11 @@ export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
     const index = tabs.findIndex((tab) => tab.id === activeTab);
     return index >= 0 ? index : 0;
   });
+
+  useEffect(() => {
+    const index = tabs.findIndex((tab) => tab.id === activeTab);
+    setFocusedTab(index >= 0 ? index : 0);
+  }, [activeTab, tabs]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     let newFocusIndex = focusedTab;
@@ -80,9 +86,13 @@ export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
                   tabIndex={focusedTab === index ? 0 : -1}
                   ref={(el) => (tabRefs.current[index] = el)}
                   onFocus={handleFocus}
+                  onClick={() => {
+                    setFocusedTab(index);
+                    onTabChange?.(tab.id);
+                  }}
                   className={`flex items-center gap-2 px-1 py-2 pb-3 text-sm relative ${
                     isActive ? 'text-primary border-b-2 border-primary font-semibold' : 'text-gray-600'
-                  }`}
+                  }`}}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
                   {tab.label}
@@ -137,7 +147,17 @@ export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
               );
             });
           })()
-        : children}
+        : tabs.map((tab) => (
+            <div
+              key={tab.id}
+              id={`panel-${tab.id}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${tab.id}`}
+              hidden={activeTab !== tab.id}
+            >
+              {activeTab === tab.id ? children : null}
+            </div>
+          ))}
     </div>
   );
 }
