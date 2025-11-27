@@ -10,6 +10,7 @@ declare global {
 // Initialize the Prisma client.
 // In development, we store it on the global object to reuse it across hot reloads.
 // In production and test environments, a new instance is created as needed.
+// biome-ignore suspicious/noRedeclare
 export const prisma =
   global.prisma ||
   new PrismaClient({
