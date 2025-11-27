@@ -20,9 +20,10 @@ export function Tabs({ activeTab, tabs, className }: TabsProps) {
   // Accessibility Note: This component provides keyboard navigation for tabs using ArrowLeft, ArrowRight, Home, and End keys,
   // along with appropriate ARIA roles and attributes for screen reader compatibility.
   const tabRefs = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
-  const [focusedTab, setFocusedTab] = useState(
-    tabs.findIndex((tab) => tab.id === activeTab)
-  );
+  const [focusedTab, setFocusedTab] = useState(() => {
+    const index = tabs.findIndex((tab) => tab.id === activeTab);
+    return index >= 0 ? index : 0;
+  });
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     let newFocusIndex = focusedTab;
