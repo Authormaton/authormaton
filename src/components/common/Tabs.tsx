@@ -14,9 +14,10 @@ interface TabsProps {
   activeTab: string;
   tabs: Tab[];
   className?: string;
+  children: React.ReactNode;
 }
 
-export function Tabs({ activeTab, tabs, className }: TabsProps) {
+export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
   // Accessibility Note: This component provides keyboard navigation for tabs using ArrowLeft, ArrowRight, Home, and End keys,
   // along with appropriate ARIA roles and attributes for screen reader compatibility.
   const tabRefs = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
@@ -51,57 +52,81 @@ export function Tabs({ activeTab, tabs, className }: TabsProps) {
   };
 
   return (
-    <div
-      role="tablist"
-      aria-orientation="horizontal"
-      onKeyDown={handleKeyDown}
-      className={`border-b border-primary/20 ${className}`}
-    >
-      <div className='flex justify-center gap-8'>
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          const hasHighlight = tab.highlight || false;
+    <div className={className}>
+      <div
+        role="tablist"
+        aria-orientation="horizontal"
+        onKeyDown={handleKeyDown}
+        className={`border-b border-primary/20`}
+      >
+        <div className='flex justify-center gap-8'>
+          {tabs.map((tab, index) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            const hasHighlight = tab.highlight || false;
 
-          if (!tab.href) {
+            const handleFocus = () => {
+              setFocusedTab(index);
+            };
+
+            if (!tab.href) {
+              return (
+                <button
+                  key={tab.id}
+                  id={`tab-${tab.id}`}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`panel-${tab.id}`}
+                  tabIndex={focusedTab === index ? 0 : -1}
+                  ref={(el) => (tabRefs.current[index] = el)}
+                  onFocus={handleFocus}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
+                  {tab.label}
+                  {hasHighlight && <div className='w-2 h-2 bg-primary relative top-[-1px] rounded-full'></div>}
+                </button>
+              );
+            }
+
             return (
-              <button
+              <Link
                 key={tab.id}
                 id={`tab-${tab.id}`}
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={`panel-${tab.id}`}
-                tabIndex={isActive ? 0 : -1}
-                ref={(el) => (tabRefs.current[tabs.findIndex((t) => t.id === tab.id)] = el)}
+                tabIndex={focusedTab === index ? 0 : -1}
+                ref={(el) => (tabRefs.current[index] = el)}
+                href={tab.href}
+                onFocus={handleFocus}
+                className={`flex items-center gap-2 px-1 py-2 pb-3 text-sm relative ${
+                  isActive ? 'text-primary border-b-2 border-primary font-semibold' : 'text-gray-600'
+                }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
                 {tab.label}
                 {hasHighlight && <div className='w-2 h-2 bg-primary relative top-[-1px] rounded-full'></div>}
-              </button>
+              </Link>
             );
-          }
-
-          return (
-            <Link
-              key={tab.id}
-              id={`tab-${tab.id}`}
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`panel-${tab.id}`}
-              tabIndex={isActive ? 0 : -1}
-              ref={(el) => (tabRefs.current[tabs.findIndex((t) => t.id === tab.id)] = el)}
-              href={tab.href}
-              className={`flex items-center gap-2 px-1 py-2 pb-3 text-sm relative ${
-                isActive ? 'text-primary border-b-2 border-primary font-semibold' : 'text-gray-600'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
-              {tab.label}
-              {hasHighlight && <div className='w-2 h-2 bg-primary relative top-[-1px] rounded-full'></div>}
-            </Link>
-          );
-        })}
+          })}
+        </div>
       </div>
+      {Array.isArray(children)
+        ? children.map((child, index) => {
+            const tab = tabs[index];
+            return (
+              <div
+                key={tab.id}
+                id={`panel-${tab.id}`}
+                role="tabpanel"
+                aria-labelledby={`tab-${tab.id}`}
+                hidden={activeTab !== tab.id}
+              >
+                {child}
+              </div>
+            );
+          })
+        : children}
     </div>
   );
 }
