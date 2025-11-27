@@ -80,6 +80,9 @@ export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
                   tabIndex={focusedTab === index ? 0 : -1}
                   ref={(el) => (tabRefs.current[index] = el)}
                   onFocus={handleFocus}
+                  className={`flex items-center gap-2 px-1 py-2 pb-3 text-sm relative ${
+                    isActive ? 'text-primary border-b-2 border-primary font-semibold' : 'text-gray-600'
+                  }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
                   {tab.label}
@@ -112,20 +115,28 @@ export function Tabs({ activeTab, tabs, className, children }: TabsProps) {
         </div>
       </div>
       {Array.isArray(children)
-        ? children.map((child, index) => {
-            const tab = tabs[index];
-            return (
-              <div
-                key={tab.id}
-                id={`panel-${tab.id}`}
-                role="tabpanel"
-                aria-labelledby={`tab-${tab.id}`}
-                hidden={activeTab !== tab.id}
-              >
-                {child}
-              </div>
-            );
-          })
+        ? (() => {
+            if (process.env.NODE_ENV === 'development' && (children as React.ReactNode[]).length !== tabs.length) {
+              console.warn(
+                `Mismatch between number of tabs (${tabs.length}) and children (${(children as React.ReactNode[]).length}). ` +
+                  `Ensure each tab has a corresponding child element.`
+              );
+            }
+            return (children as React.ReactNode[]).slice(0, tabs.length).map((child, index) => {
+              const tab = tabs[index];
+              return (
+                <div
+                  key={tab.id}
+                  id={`panel-${tab.id}`}
+                  role="tabpanel"
+                  aria-labelledby={`tab-${tab.id}`}
+                  hidden={activeTab !== tab.id}
+                >
+                  {child}
+                </div>
+              );
+            });
+          })()
         : children}
     </div>
   );
