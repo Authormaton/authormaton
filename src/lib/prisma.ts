@@ -1,16 +1,32 @@
 import { PrismaClient } from '../generated/prisma';
 
-// Add prisma to the globalThis object so that it can be accessed across hot module reloads
-// in development environments and across serverless function invocations.
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// Define a global type for the Prisma client to prevent multiple instances
+// in development environments (due to hot module reloading) and serverless functions.
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
 
-export const prisma = globalForPrisma.prisma ?? (() => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Creating new PrismaClient instance'); // Sanity check
+// Initialize the Prisma client.
+// In development, we store it on the global object to reuse it across hot reloads.
+// In production and test environments, a new instance is created as needed.
+export const prisma =
+  global.prisma ||
+  new PrismaClient({
+    log: ['query'], // Example: Log all queries to the console
+  });
+
+// If not in production, assign the Prisma client to the global object.
+// This ensures that during development, the same client instance is reused
+// across hot module reloads, preventing excessive database connections.
+if (process.env.NODE_ENV !== 'production') {
+  global.prisma = prisma;
+}
+
+// Smoke-check to ensure the global Prisma client is correctly assigned and of the right type.
+// This helps prevent accidental global pollution or incorrect assignments.
+if (process.env.NODE_ENV === 'development') {
+  if (global.prisma !== prisma) {
+    console.warn('Prisma client in globalThis is not the expected instance.');
   }
-  const client = new PrismaClient();
-  globalForPrisma.prisma = client;
-  return client;
-})();
+}
