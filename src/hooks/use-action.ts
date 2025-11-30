@@ -83,6 +83,7 @@ export function useAction<TInput = void, TOutput = void>(action?: ServerAction<T
   const mounted = useRef(true);
 
   useEffect(() => {
+    mounted.current = true;
     // Set mounted ref to false on unmount
     return () => {
       mounted.current = false;
@@ -117,7 +118,7 @@ export function useAction<TInput = void, TOutput = void>(action?: ServerAction<T
         setLoading(false);
       }
     }
-  }, [action, setLoading, setIsActionLoading, mounted]);
+  }, [action, setLoading]);
 
   return { wrappedAction, isActionLoading };
 }
