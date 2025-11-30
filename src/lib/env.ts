@@ -14,8 +14,8 @@ import { z } from 'zod';
 const envSchema = z.object({
   APP_ENV: z.enum(['development', 'production']).default('production'),
   AUTH_SECRET: z.string().min(32, 'AUTH_SECRET must be at least 32 characters long'),
-  NEXT_PUBLIC_API_URL: z.string().url().default('http://localhost:3000'),
-  NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),
+  NEXT_PUBLIC_API_URL: z.string().url().pipe(z.string().default(process.env.APP_ENV === 'development' ? 'http://localhost:3000' : z.string().optional())),
+  NEXT_PUBLIC_APP_URL: z.string().url().pipe(z.string().default(process.env.APP_ENV === 'development' ? 'http://localhost:3000' : z.string().optional())),
 });
 
 const _env = envSchema.safeParse(process.env);
@@ -26,5 +26,14 @@ if (!_env.success) {
 }
 
 export const env = _env.data;
+
+if (env.APP_ENV === 'production') {
+  if (env.NEXT_PUBLIC_API_URL.includes('localhost')) {
+    throw new Error('NEXT_PUBLIC_API_URL cannot contain 'localhost' in production');
+  }
+  if (env.NEXT_PUBLIC_APP_URL.includes('localhost')) {
+    throw new Error('NEXT_PUBLIC_APP_URL cannot contain 'localhost' in production');
+  }
+}
 
 export const IS_PRODUCTION = env.APP_ENV === 'production';
