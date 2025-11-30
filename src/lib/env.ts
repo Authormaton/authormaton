@@ -1,19 +1,39 @@
 import 'server-only';
+import { z } from 'zod';
 
-const APP_ENV = (process.env.APP_ENV as 'development' | 'production') ?? 'production';
-const IS_PRODUCTION = APP_ENV === 'production';
+/**
+ * @example
+ * // To access environment variables:
+ * // 1. Import the `env` object: `import { env } from '@/lib/env';`
+ * // 2. Access variables directly: `env.AUTH_SECRET`, `env.NEXT_PUBLIC_API_URL`
+ *
+ * // Note: This file is for server-side environment variables only.
+ * // For client-side access, variables must be prefixed with `NEXT_PUBLIC_`.
+ */
 
-const AUTH_SECRET = process.env.AUTH_SECRET as string;
+const envSchema = z.object({
+  APP_ENV: z.enum(['development', 'production']).default('production'),
+  AUTH_SECRET: z.string().min(32, 'AUTH_SECRET must be at least 32 characters long'),
+  NEXT_PUBLIC_API_URL: z.string().url().optional().default(process.env.APP_ENV === 'development' ? 'http://localhost:3000' : undefined),,
+  NEXT_PUBLIC_APP_URL: z.string().url().optional().default(process.env.APP_ENV === 'development' ? 'http://localhost:3000' : undefined),,
+});
 
-if (!AUTH_SECRET || AUTH_SECRET.length < 32) {
-  throw new Error('AUTH_SECRET must be set and at least 32 characters long');
+const _env = envSchema.safeParse(process.env);
+
+if (!_env.success) {
+  console.error('❌ Invalid environment variables:', _env.error.format());
+  throw new Error('Invalid environment variables');
 }
 
-function getPublicEnv() {
-  return {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000',
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
-  };
+export const env = _env.data;
+
+if (env.APP_ENV === 'production') {
+  if (env.NEXT_PUBLIC_API_URL.includes('localhost')) {
+    throw new Error("NEXT_PUBLIC_API_URL cannot contain 'localhost' in production');
+  }
+  if (env.NEXT_PUBLIC_APP_URL.includes('localhost')) {
+    throw new Error("NEXT_PUBLIC_APP_URL cannot contain 'localhost' in production');
+  }
 }
 
-export { APP_ENV, IS_PRODUCTION, AUTH_SECRET, getPublicEnv };
+export const IS_PRODUCTION = env.APP_ENV === 'production';
