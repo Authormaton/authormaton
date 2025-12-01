@@ -80,10 +80,15 @@ export function recordAnalyticsEvent(name: string, payload?: Record<string, any>
 
   debounceTimer = setTimeout(async () => {
     // Send the accumulated events to the server action
-    // @ts-ignore
-    await recordAnalyticsEvents(analyticsQueue);
-    // Clear the queue after sending
-    analyticsQueue = [];
+    const eventsToSend = analyticsQueue.slice();
+    analyticsQueue = []; // Clear the queue immediately
+    try {
+      // @ts-ignore
+      await recordAnalyticsEvents(eventsToSend);
+    } catch (error) {
+      console.error("Failed to record analytics events, re-queueing:", error);
+      analyticsQueue.unshift(...eventsToSend); // Re-merge events on failure
+    }
     debounceTimer = null;
   }, DEBOUNCE_DELAY);
 }
