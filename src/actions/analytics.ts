@@ -3,6 +3,7 @@
 import { authActionClient } from '@/lib/action';
 import { prisma } from '@/lib/prisma';
 import { ProjectType } from '@/generated/prisma';
+import { z } from 'zod';
 
 
 // Define a type for your analytics event
@@ -12,15 +13,26 @@ export type AnalyticsEvent = {
   timestamp: Date;
 };
 
+// Define Zod schemas for validation
+export const analyticsEventSchema = z.object({
+  name: z.string(),
+  payload: z.record(z.string(), z.any()).optional(),
+  timestamp: z.date(),
+});
+
+export const analyticsEventsInputSchema = z.object({
+  events: z.array(analyticsEventSchema),
+});
+
 // Server action to record analytics events
-export const recordAnalyticsEvents = authActionClient.action(
-  async (events: AnalyticsEvent[]) => {
-    console.log('Received analytics events:', events);
+export const recordAnalyticsEvents = authActionClient
+  .schema(analyticsEventsInputSchema)
+  .action(async ({ parsedInput }) => {
+    console.log('Received analytics events:', parsedInput.events);
     // In a real application, you would save these events to a database
     // For now, we'll just log them.
-    return { success: true, count: events.length };
-  },
-);
+    return { success: true, count: parsedInput.events.length };
+  });
 
 
 export const getProjectAnalytics = authActionClient.action(async () => {
@@ -60,35 +72,3 @@ export const getProjectAnalytics = authActionClient.action(async () => {
   };
 });
 
-// Client-side debounced function for recording analytics events
-// This needs to be outside the 'use server' block to run on the client
-let analyticsQueue: AnalyticsEvent[] = [];
-let debounceTimer: NodeJS.Timeout | null = null;
-const DEBOUNCE_DELAY = 1000; // 1 second
-
-export function recordAnalyticsEvent(name: string, payload?: Record<string, any>) {
-  const event: AnalyticsEvent = {
-    name,
-    payload,
-    timestamp: new Date(),
-  };
-  analyticsQueue.push(event);
-
-  if (debounceTimer) {
-    clearTimeout(debounceTimer);
-  }
-
-  debounceTimer = setTimeout(async () => {
-    // Send the accumulated events to the server action
-    const eventsToSend = analyticsQueue.slice();
-    analyticsQueue = []; // Clear the queue immediately
-    try {
-      // @ts-ignore
-      await recordAnalyticsEvents(eventsToSend);
-    } catch (error) {
-      console.error("Failed to record analytics events, re-queueing:", error);
-      analyticsQueue.unshift(...eventsToSend); // Re-merge events on failure
-    }
-    debounceTimer = null;
-  }, DEBOUNCE_DELAY);
-}
