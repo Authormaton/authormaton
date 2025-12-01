@@ -5,6 +5,24 @@ import { prisma } from '@/lib/prisma';
 import { ProjectType } from '@/generated/prisma';
 
 
+// Define a type for your analytics event
+export type AnalyticsEvent = {
+  name: string;
+  payload?: Record<string, any>;
+  timestamp: Date;
+};
+
+// Server action to record analytics events
+export const recordAnalyticsEvents = authActionClient.action(
+  async (events: AnalyticsEvent[]) => {
+    console.log('Received analytics events:', events);
+    // In a real application, you would save these events to a database
+    // For now, we'll just log them.
+    return { success: true, count: events.length };
+  },
+);
+
+
 export const getProjectAnalytics = authActionClient.action(async () => {
   const totalProjects = await prisma.project.count();
 
@@ -41,3 +59,31 @@ export const getProjectAnalytics = authActionClient.action(async () => {
     projectsByCreationMonth: formattedProjectsByCreationMonth
   };
 });
+
+// Client-side debounced function for recording analytics events
+// This needs to be outside the 'use server' block to run on the client
+let analyticsQueue: AnalyticsEvent[] = [];
+let debounceTimer: NodeJS.Timeout | null = null;
+const DEBOUNCE_DELAY = 1000; // 1 second
+
+export function recordAnalyticsEvent(name: string, payload?: Record<string, any>) {
+  const event: AnalyticsEvent = {
+    name,
+    payload,
+    timestamp: new Date(),
+  };
+  analyticsQueue.push(event);
+
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
+
+  debounceTimer = setTimeout(async () => {
+    // Send the accumulated events to the server action
+    // @ts-ignore
+    await recordAnalyticsEvents(analyticsQueue);
+    // Clear the queue after sending
+    analyticsQueue = [];
+    debounceTimer = null;
+  }, DEBOUNCE_DELAY);
+}
