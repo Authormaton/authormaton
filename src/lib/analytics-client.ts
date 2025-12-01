@@ -12,7 +12,7 @@ interface QueuedEvent {
 }
 
 let analyticsQueue: QueuedEvent[] = [];
-let debounceTimer: NodeJS.Timeout | null = null;
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function recordAnalyticsEvent(name: string, payload?: Record<string, any>) {
   const event: AnalyticsEvent = {
@@ -55,6 +55,10 @@ export function recordAnalyticsEvent(name: string, payload?: Record<string, any>
         }
       }
       analyticsQueue.unshift(...reQueueEvents);
+      while (analyticsQueue.length > MAX_QUEUE_SIZE) {
+        const droppedEvent = analyticsQueue.shift();
+        console.warn("Analytics queue full after retry, dropping oldest event:", droppedEvent?.event.name);
+      }
     }
     debounceTimer = null;
   }, DEBOUNCE_DELAY);
