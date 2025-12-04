@@ -14,6 +14,10 @@ type UserWithoutPassword = {
 };
 
 export async function signin(input: SigninInput): Promise<Result<UserWithoutPassword>> {
+  const email = input.email;
+  const password = input.password;
+  const normalisedEmail = email.toLowerCase().trim();
+
   try {
     // Find user by email
     const user = await prisma.user.findUnique({
