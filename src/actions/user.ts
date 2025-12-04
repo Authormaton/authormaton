@@ -25,9 +25,10 @@ const updateProfileSchema = z.object({
 });
 
 export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
-  const userId = await getAuthenticatedUserId();
-
-  if (!userId) {
+  let userId: string;
+  try {
+    userId = await getAuthenticatedUserId();
+  } catch {
     return { success: false, error: 'User not authenticated.' };
   }
 
@@ -56,9 +57,10 @@ const changePasswordSchema = z.object({
 });
 
 export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
-  const userId = await getAuthenticatedUserId();
-
-  if (!userId) {
+  let userId: string;
+  try {
+    userId = await getAuthenticatedUserId();
+  } catch {
     return { success: false, error: 'User not authenticated.' };
   }
 
