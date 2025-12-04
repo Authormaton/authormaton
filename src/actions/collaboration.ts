@@ -3,6 +3,11 @@ import { protectedAction } from '@/lib/action';
 import { prisma } from '@/lib/prisma';
 import { Role } from '@/generated/prisma/client';
 import { success, error, ErrorCodes } from '@/lib/result';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+const isPrismaNotFoundError = (e: unknown): e is PrismaClientKnownRequestError => {
+  return e instanceof PrismaClientKnownRequestError && e.code === 'P2025';
+};
 
 export const inviteMemberSchema = z.object({
   projectId: z.string(),
@@ -62,7 +67,7 @@ export const removeMember = protectedAction.action(
     } catch (e) {
       console.error('Error removing member', e);
       // Check if the error is due to record not found
-      if (e instanceof Error && e.message.includes('Record to delete does not exist')) {
+      if (isPrismaNotFoundError(e)) {
         return error('Member not found', ErrorCodes.NOT_FOUND);
       }
       return error('Failed to remove member', ErrorCodes.UNKNOWN_ERROR);
@@ -96,7 +101,7 @@ export const updateMemberRole = protectedAction.action(
     } catch (e) {
       console.error('Error updating member role', e);
       // Check if the error is due to record not found
-      if (e instanceof Error && e.message.includes('Record to update does not exist')) {
+      if (isPrismaNotFoundError(e)) {
         return error('Member not found', ErrorCodes.NOT_FOUND);
       }
       return error('Failed to update member role', ErrorCodes.UNKNOWN_ERROR);
