@@ -4,8 +4,13 @@ import { prisma } from '@/lib/prisma';
 import { authActionClient } from '@/lib/action';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { getAuthenticatedUserId } from '@/lib/action';
 import bcrypt from 'bcryptjs';
+
+// Define explicit return types for actions
+type ActionResponse = {
+  success: boolean;
+  error?: string;
+};
 
 const updateProfileSchema = z.object({
   name: z
@@ -18,8 +23,8 @@ const updateProfileSchema = z.object({
     })
 });
 
-export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }) => {
-  const userId = await getAuthenticatedUserId();
+export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput, ctx }): Promise<ActionResponse> => {
+  const userId = ctx.user.id;
 
   try {
     await prisma.user.update({
@@ -45,8 +50,8 @@ const changePasswordSchema = z.object({
   })
 });
 
-export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }) => {
-  const userId = await getAuthenticatedUserId();
+export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput, ctx }): Promise<ActionResponse> => {
+  const userId = ctx.user.id;
 
   try {
     const user = await prisma.user.findUnique({
