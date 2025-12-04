@@ -49,5 +49,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // Apply the middleware to all routes except those explicitly excluded.
   // This ensures that authentication logic runs only where necessary, improving performance.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|signin|signup).*)']
+  matcher: ['/((?!api|_next|favicon.ico|signin|signup).*)']
 };
