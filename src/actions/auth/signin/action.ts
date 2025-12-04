@@ -19,6 +19,7 @@ export const signinAction = actionClient
         return success(result.data);
       }
 
+      toast.error(result.error);
       return error(result.error, ErrorCodes.BAD_REQUEST);
     } catch (err) {
       console.error('Sign in error:', err, { email });
