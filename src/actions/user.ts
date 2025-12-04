@@ -7,6 +7,12 @@ import { revalidatePath } from 'next/cache';
 import { getAuthenticatedUserId } from '@/lib/action';
 import bcrypt from 'bcryptjs';
 
+// Define explicit return types for actions
+type ActionResponse = {
+  success: boolean;
+  error?: string;
+};
+
 const updateProfileSchema = z.object({
   name: z
     .string()
@@ -18,8 +24,12 @@ const updateProfileSchema = z.object({
     })
 });
 
-export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }) => {
+export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
   const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return { success: false, error: 'User not authenticated.' };
+  }
 
   try {
     await prisma.user.update({
@@ -45,8 +55,12 @@ const changePasswordSchema = z.object({
   })
 });
 
-export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }) => {
+export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
   const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return { success: false, error: 'User not authenticated.' };
+  }
 
   try {
     const user = await prisma.user.findUnique({
