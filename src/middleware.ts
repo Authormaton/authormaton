@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
 
   // If no valid token is found, check if the requested path is a protected route.
   // Protected routes require active authentication.
-  if (pathname.startsWith('/protected')) {
+  if (pathname.startsWith('/protected') || pathname.startsWith('/projects')) {
     // For protected routes without a valid token, redirect the user to the sign-in page.
     // This enforces access control for sensitive areas of the application.
     return NextResponse.redirect(new URL('/signin', request.url));
@@ -49,5 +49,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // Apply the middleware to all routes except those explicitly excluded.
   // This ensures that authentication logic runs only where necessary, improving performance.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|signin|signup).*)_protected', '/projects/:path*']
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|signin|signup).*)']
 };
