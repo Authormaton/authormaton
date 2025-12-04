@@ -25,9 +25,17 @@ export function recordAnalyticsEvent(name: string, payload?: Record<string, any>
     retryCount: 0,
   };
 
-  if (analyticsQueue.length >= MAX_QUEUE_SIZE) {
-    const droppedEvent = analyticsQueue.shift(); // Drop the oldest event
-    console.warn("Analytics queue full, dropping oldest event:", droppedEvent?.event.name);
+  const eventString = JSON.stringify({ name, payload });
+
+  // Check if an identical event (name and payload) is already in the queue
+  const isDuplicate = analyticsQueue.some(queuedEvent => {
+    const existingEventString = JSON.stringify({ name: queuedEvent.event.name, payload: queuedEvent.event.payload });
+    return existingEventString === eventString;
+  });
+
+  if (isDuplicate) {
+    console.warn("Duplicate analytics event detected and prevented:", name, payload);
+    return;
   }
 
   analyticsQueue.push(queuedEvent);
