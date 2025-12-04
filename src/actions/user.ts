@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { authActionClient } from '@/lib/action';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { getAuthenticatedUserId } from '@/lib/action';
 import bcrypt from 'bcryptjs';
 
 // Define explicit return types for actions
@@ -24,13 +23,8 @@ const updateProfileSchema = z.object({
     })
 });
 
-export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
-  let userId: string;
-  try {
-    userId = await getAuthenticatedUserId();
-  } catch {
-    return { success: false, error: 'User not authenticated.' };
-  }
+export const updateProfile = authActionClient.schema(updateProfileSchema).action(async ({ parsedInput, ctx }): Promise<ActionResponse> => {
+  const userId = ctx.user.id;
 
   try {
     await prisma.user.update({
@@ -56,13 +50,8 @@ const changePasswordSchema = z.object({
   })
 });
 
-export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput }): Promise<ActionResponse> => {
-  let userId: string;
-  try {
-    userId = await getAuthenticatedUserId();
-  } catch {
-    return { success: false, error: 'User not authenticated.' };
-  }
+export const changePassword = authActionClient.schema(changePasswordSchema).action(async ({ parsedInput, ctx }): Promise<ActionResponse> => {
+  const userId = ctx.user.id;
 
   try {
     const user = await prisma.user.findUnique({
