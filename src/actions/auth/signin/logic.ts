@@ -14,41 +14,42 @@ type UserWithoutPassword = {
 };
 
 export async function signin(input: SigninInput): Promise<Result<UserWithoutPassword>> {
-  const { email, password } = input;
+  try {
+    // Find user by email
+    const user = await prisma.user.findUnique({
+      where: { email: normalisedEmail },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true
+      }
+    });
 
-  const normalisedEmail = email.trim().toLowerCase();
-
-  // Find user by email
-  const user = await prisma.user.findUnique({
-    where: { email: normalisedEmail },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      password: true,
-      role: true
+    if (!user) {
+      console.error('Signin error: User not found');
+      return error('Invalid credentials');
     }
-  });
 
-  if (!user) {
-    console.error('Signin error: User not found');
-    return error('Invalid credentials');
+    // Verify password
+    const isValidPassword = await bcryptjs.compare(password, user.password);
+    if (!isValidPassword) {
+      console.error('Signin error: Invalid password');
+      return error('Invalid credentials');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user;
+
+    // Set session
+    const session = await getSession();
+    session.user = { id: userWithoutPassword.id };
+    await session.save();
+
+    return success(userWithoutPassword);
+  } catch (err) {
+    console.error('Signin logic error:', err, { email });
+    return error('An unexpected error occurred during signin.');
   }
-
-  // Verify password
-  const isValidPassword = await bcryptjs.compare(password, user.password);
-  if (!isValidPassword) {
-    console.error('Signin error: Invalid password');
-    return error('Invalid credentials');
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password: _password, ...userWithoutPassword } = user;
-
-  // Set session
-  const session = await getSession();
-  session.user = { id: userWithoutPassword.id };
-  await session.save();
-
-  return success(userWithoutPassword);
 }
