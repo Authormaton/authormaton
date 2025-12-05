@@ -20,6 +20,10 @@ export async function signup(input: SignupInput): Promise<Result<User>> {
 
   const normalisedEmail = email.toLowerCase().trim();
 
+  if (!name || name.trim() === '') {
+    return error('Username is required.');
+  }
+
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({
     where: { email: normalisedEmail }
