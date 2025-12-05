@@ -34,14 +34,15 @@ export function SignupForm() {
     },
     onError: (error) => {
       const fieldErrors = error.error.validationErrors?.fieldErrors;
-      const errorMessage =
-        error.error.thrownError?.message ??
-        error.error.serverError ??
-        (fieldErrors
-          ? Object.entries(fieldErrors)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(', ')
-          : 'An unknown error occurred');
+      let errorMessage = 'An unknown error occurred';
+
+      if (error.error.serverError) {
+        errorMessage = error.error.serverError;
+      } else if (fieldErrors) {
+        errorMessage = Object.entries(fieldErrors)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ');
+      }
       toast.error(errorMessage);
     }
   });
