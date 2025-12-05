@@ -21,8 +21,8 @@ interface GetProjectsParams {
 
 export async function getProjects({ userId, search, type, page: rawPage, perPage: rawPerPage }: GetProjectsParams): Promise<Result<{ projects: ProjectListItem[]; total: number }>> {
   const MAX_PER_PAGE = 100;
-  const page = Math.max(1, Math.floor(Number.isFinite(rawPage) ? rawPage : 1));
-  const perPage = Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(Number.isFinite(rawPerPage) ? rawPerPage : 20)));
+  const page = Math.max(1, Math.floor(typeof rawPage === 'number' && Number.isFinite(rawPage) ? rawPage : 1));
+  const perPage = Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(typeof rawPerPage === 'number' && Number.isFinite(rawPerPage) ? rawPerPage : 20)));
 
   const skip = (page - 1) * perPage;
   const whereClause = {

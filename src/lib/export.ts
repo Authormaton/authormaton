@@ -1,9 +1,25 @@
 import { getProjects, ProjectListItem } from '@/actions/projects/getProjects';
 
+function escapeCsvValue(value: any): string {
+  let stringValue = String(value);
+
+  if (value instanceof Date) {
+    stringValue = value.toISOString();
+  }
+
+  stringValue = stringValue.replace(/"/g, '""');
+
+  if (stringValue.startsWith('=') || stringValue.startsWith('+') || stringValue.startsWith('-') || stringValue.startsWith('@')) {
+    stringValue = ''' + stringValue;
+  }
+
+  return `"${stringValue}"`;
+}
+
 export async function exportProjects(userId: string, format: 'csv' | 'pdf') {
   let allProjects: ProjectListItem[] = [];
   let page = 1;
-  const perPage = 100; 
+  const perPage = 100;
 
   let total = 0;
   let fetchedCount = 0;
@@ -23,20 +39,18 @@ export async function exportProjects(userId: string, format: 'csv' | 'pdf') {
 
 
   if (format === 'csv') {
-    if (allProjects.length === 0) {
-      const csvContent = 'data:text/csv;charset=utf-8,';
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement('a');
-      link.setAttribute('href', encodedUri);
-      link.setAttribute('download', 'projects.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      return;
-    }
+    const headers = allProjects.length > 0 ? Object.keys(allProjects[0]) : ['id', 'title', 'createdAt', 'updatedAt', 'type', 'userId']; // Fallback headers for empty projects
+    const escapedHeaders = headers.map(escapeCsvValue).join(',');
+
+    const csvRows = allProjects.map(project => {
+      const rowValues = headers.map(header => project[header as keyof ProjectListItem]);
+      return rowValues.map(escapeCsvValue).join(',');
+    });
+
     const csvContent =
       'data:text/csv;charset=utf-8,' +
-      [Object.keys(allProjects[0]).join(','), ...allProjects.map((project) => Object.values(project).join(','))].join('\n');
+      [escapedHeaders, ...csvRows].join('\n');
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
