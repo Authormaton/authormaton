@@ -19,6 +19,17 @@ export async function createProject(
   }
 
   try {
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        title,
+        userId,
+      },
+    });
+
+    if (existingProject) {
+      return error('A project with this title already exists for your account.');
+    }
+
     const newProject = await prisma.project.create({
       data: {
         title,
