@@ -27,7 +27,7 @@ export async function createProject(
     });
 
     if (existingProject) {
-      return error('A project with this title already exists for your account.');
+      return error('A project with this title already exists.');
     }
 
     const newProject = await prisma.project.create({
@@ -51,7 +51,7 @@ export async function createProject(
         return error('A project with this title already exists.');
       }
       // Generic Prisma error
-      return error(`Database error: ${e.message}`);
+      return error('A database error occurred. Please try again later.');
     }
 
     // Handle any other unexpected errors
