@@ -17,8 +17,8 @@ export const signupAction = actionClient
         return result.data;
       }
 
-      toast.error(result.error);
-      return error(result.error, ErrorCodes.BAD_REQUEST);
+      toast.error('Failed to sign up. Please check your details.');
+      return error('Failed to sign up. Please check your details.', ErrorCodes.BAD_REQUEST);
     } catch (err) {
       console.error('Sign up error:', err);
       toast.error('Failed to sign up. Please try again.');
