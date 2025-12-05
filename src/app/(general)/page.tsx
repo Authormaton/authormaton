@@ -16,7 +16,7 @@ export default async function HomePage() {
     redirect('/signin');
   }
 
-  const [projectsError, projectsResult] = await safeAwait(getProjects(userId));
+  const [projectsError, projectsResult] = await safeAwait(getProjects({ userId }));
   const [analyticsError, analyticsResult] = await safeAwait(getProjectAnalytics());
 
   if (projectsError) {
@@ -27,7 +27,6 @@ export default async function HomePage() {
     return <BasicAlert variant='destructive' title='Error loading projects' description={projectsResult.error} />;
   }
 
-  const initialProjects = result.data;
+  const { projects: initialProjects, total } = projectsResult.data;
 
   return <HomePageContainer initialProjects={initialProjects} userId={userId} />;
-}

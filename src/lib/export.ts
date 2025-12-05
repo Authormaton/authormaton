@@ -1,13 +1,13 @@
 import { getProjects } from '@/actions/projects/getProjects';
 
-export async function exportProjects(format: 'csv' | 'pdf') {
-  const result = await getProjects();
+export async function exportProjects(userId: string, format: 'csv' | 'pdf') {
+  const result = await getProjects({ userId });
 
   if (!result.success) {
     throw new Error('Failed to fetch projects for export.');
   }
 
-  const projects = result.data;
+  const { projects, total } = result.data;
 
   if (format === 'csv') {
     const csvContent =

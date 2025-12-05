@@ -10,7 +10,11 @@ interface GetProjectsParams {
   perPage?: number;
 }
 
-export async function getProjects({ userId, search, type, page = 1, perPage = 10 }: GetProjectsParams): Promise<Result<{ projects: Project[]; total: number }>> {
+export async function getProjects({ userId, search, type, page: rawPage, perPage: rawPerPage }: GetProjectsParams): Promise<Result<{ projects: Project[]; total: number }>> {
+  const MAX_PER_PAGE = 100;
+  const page = Math.max(1, Math.floor(rawPage ?? 1));
+  const perPage = Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(rawPerPage ?? 20)));
+
   const skip = (page - 1) * perPage;
   const whereClause = {
     userId,
@@ -23,12 +27,20 @@ export async function getProjects({ userId, search, type, page = 1, perPage = 10
     ...(type && { type })
   };
 
-  const [projects, total] = await prisma.$transaction([
+  const [projects, total] = await Promise.all([
     prisma.project.findMany({
       skip,
       take: perPage,
       where: whereClause,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        updatedAt: true,
+        type: true,
+        userId: true,
+      },
     }),
     prisma.project.count({ where: whereClause })
   ]);
