@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const signupSchema = z.object({
-  name: z.string().min(1, 'Please enter your name.'),
-  email: z.string().email('Please enter a valid email address.'),
+  name: z.string().min(1, 'Please enter your name.').trim(),
+  email: z.string().email('Please enter a valid email address.').trim(),
   termsAndConditions: z
     .boolean()
     .refine((val) => val === true, { message: 'Please accept the terms and conditions to continue.' }),
