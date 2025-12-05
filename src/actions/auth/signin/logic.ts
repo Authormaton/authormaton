@@ -15,7 +15,7 @@ type UserWithoutPassword = {
 
 export async function signin(input: SigninInput): Promise<Result<UserWithoutPassword>> {
   const email = input.email;
-  const password = input.password;
+  const password = input.password.trim();
   const normalisedEmail = email.toLowerCase().trim();
 
   try {
@@ -54,6 +54,6 @@ export async function signin(input: SigninInput): Promise<Result<UserWithoutPass
     return success(userWithoutPassword);
   } catch (err) {
     console.error('Signin logic error:', err, { email });
-    return error('An unexpected error occurred during signin.');
+    return error('SIGNIN_FAILED');
   }
 }
