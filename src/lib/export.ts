@@ -10,7 +10,7 @@ function escapeCsvValue(value: any): string {
   stringValue = stringValue.replace(/"/g, '""');
 
   if (stringValue.startsWith('=') || stringValue.startsWith('+') || stringValue.startsWith('-') || stringValue.startsWith('@')) {
-    stringValue = ''' + stringValue;
+    stringValue = "'" + stringValue;
   }
 
   return `"${stringValue}"`;
