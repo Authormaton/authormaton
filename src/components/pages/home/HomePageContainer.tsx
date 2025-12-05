@@ -18,9 +18,10 @@ export function HomePageContainer({ initialProjects, userId }: HomePageContainer
 
   useEffect(() => {
     const loadProjects = async () => {
-      const result = await fetchProjects(userId);
+      const result = await fetchProjects({ userId });
       if (result.success) {
-        setProjects(result.data);
+        const { projects: fetchedProjects, total } = result.data;
+        setProjects(fetchedProjects);
       } else {
         // Handle error, maybe show a toast or alert
         console.error('Failed to fetch projects:', result.error);
