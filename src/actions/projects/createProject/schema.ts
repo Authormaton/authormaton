@@ -6,7 +6,8 @@ export const createProjectSchema = z.object({
   type: z.enum(ProjectType, {
     message: 'Invalid project type'
   }),
-  templateId: z.string().optional()
+  templateId: z.string().optional(),
+  description: z.string().max(1000, { message: 'Description is too long' }).optional()
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
