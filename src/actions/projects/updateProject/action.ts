@@ -14,7 +14,6 @@ export const updateProjectAction = authActionClient
     const userId = ctx.session.user.id;
 
     try {
-      // Check if project exists and belongs to the user
       const existingProject = await prisma.project.findFirst({
         where: {
           id: parsedInput.id,
@@ -26,7 +25,6 @@ export const updateProjectAction = authActionClient
       });
 
       if (!existingProject) {
-        toast.error('Project not found or you do not have permission to update it');
         return error('Project not found or you do not have permission to update it', ErrorCodes.NOT_FOUND);
       }
 
@@ -35,12 +33,8 @@ export const updateProjectAction = authActionClient
       if (updateProjectResult.success) {
         return updateProjectResult.data;
       }
-
-      toast.error(updateProjectResult.error);
-      return error(updateProjectResult.error, ErrorCodes.BAD_REQUEST);
+      return error(updateProjectResult.error, updateProjectResult.code);
     } catch (err) {
       console.error('Project update error:', err, { userId });
-      toast.error('Failed to update project. Please try again.');
       return errorFromException(err);
     }
-  });
