@@ -26,7 +26,7 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
     reValidateMode: 'onChange',
     defaultValues: {
       title: '',
-      type: ProjectType.article,
+      type: ProjectType.Article,
       templateId: selectedTemplateId
     }
   });
@@ -63,15 +63,23 @@ export function CreateProjectForm({ selectedTemplateId, setDialogOpen }: CreateP
           items={[
             {
               label: 'Article',
-              value: 'article'
+              value: 'Article'
             },
             {
-              label: 'Ebook',
-              value: 'ebook'
+              label: 'Blog',
+              value: 'Blog'
+            },
+            {
+              label: 'Email',
+              value: 'Email'
+            },
+            {
+              label: 'Tweet',
+              value: 'Tweet'
             },
             {
               label: 'Newsletter',
-              value: 'newsletter'
+              value: 'Newsletter'
             }
           ]}
           name='type'
