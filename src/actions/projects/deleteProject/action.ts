@@ -24,8 +24,8 @@ export const deleteProjectAction = authActionClient
       });
 
       if (!existingProject) {
-        toast.error('Project not found or you do not have permission to delete it');
-        return error('Project not found or you do not have permission to delete it', ErrorCodes.NOT_FOUND);
+        toast.error('You are not authorized to delete this project or it does not exist.');
+        return error('You are not authorized to delete this project or it does not exist.', ErrorCodes.UNAUTHORIZED);
       }
 
       const deleteProjectResult = await deleteProject(parsedInput);
