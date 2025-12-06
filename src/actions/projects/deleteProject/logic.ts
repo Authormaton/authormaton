@@ -6,10 +6,8 @@ import { DeleteProjectInput } from './schema';
 
 export async function deleteProject(input: DeleteProjectInput): Promise<Result<undefined>> {
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.project.deleteMany({
-        where: { id: input.id }
-      });
+    await prisma.project.deleteMany({
+      where: { id: input.id }
     });
     return success(undefined);
   } catch (error) {
