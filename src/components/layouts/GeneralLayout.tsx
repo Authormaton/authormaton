@@ -13,7 +13,7 @@ export function GeneralLayout({ children }: { children: React.ReactNode }) {
       {isMobile ? (
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant='outline' size='icon' className='fixed left-4 top-4 z-50 md:hidden'>
+                        <Button variant='outline' size='icon' className='fixed left-2 top-2 z-50 md:hidden'>
               <MenuIcon className='h-5 w-5' />
               <span className='sr-only'>Toggle Menu</span>
             </Button>
@@ -29,7 +29,7 @@ export function GeneralLayout({ children }: { children: React.ReactNode }) {
       )}
       <div className='flex flex-col'>
         <Header />
-        <main className='flex flex-1 flex-col gap-4 px-4 py-3 lg:gap-6 sm:px-6 sm:py-4'>{children}</main>
+        <main className='flex flex-1 flex-col gap-2 px-2 py-2 lg:gap-6 sm:px-4 sm:py-3'>{children}</main>
       </div>
     </div>
   );
