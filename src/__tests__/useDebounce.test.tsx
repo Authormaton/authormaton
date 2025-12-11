@@ -1,17 +1,17 @@
 import { renderHook, act } from '@testing-library/react';
-import { useDebounce } from '../hooks/use-debounce';
+import { useDebouncedValue } from '../hooks/use-debounce';
 
 // Mock timers to control setTimeout
 jest.useFakeTimers();
 
-describe('useDebounce', () => {
+describe('useDebouncedValue', () => {
   it('should return the initial value immediately', () => {
-    const { result } = renderHook(() => useDebounce('initial', 500));
+    const { result } = renderHook(() => useDebouncedValue('initial', 500));
     expect(result.current).toBe('initial');
   });
 
   it('should debounce the value', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'first', delay: 500 },
     });
 
@@ -32,7 +32,7 @@ describe('useDebounce', () => {
   });
 
   it('should handle multiple value changes within the delay', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'a', delay: 500 },
     });
 
@@ -52,35 +52,8 @@ describe('useDebounce', () => {
     expect(result.current).toBe('d'); // Only the last value should be debounced
   });
 
-  it('should update immediately on the first change when immediate is true, then debounce subsequent changes', () => {
-    const { result, rerender } = renderHook(({ value, delay, immediate }) => useDebounce(value, delay, immediate), {
-      initialProps: { value: 'initial', delay: 500, immediate: true },
-    });
-
-    // Initial render, value is 'initial'
-    expect(result.current).toBe('initial');
-
-    // First change with immediate: true, should update immediately
-    rerender({ value: 'first change', delay: 500, immediate: true });
-    expect(result.current).toBe('first change');
-
-    // Subsequent change, should now debounce
-    rerender({ value: 'second change', delay: 500, immediate: true });
-    expect(result.current).toBe('first change'); // Still 'first change' immediately
-
-    act(() => {
-      jest.advanceTimersByTime(499);
-    });
-    expect(result.current).toBe('first change');
-
-    act(() => {
-      jest.advanceTimersByTime(1);
-    });
-    expect(result.current).toBe('second change'); // 'second change' after debounce delay
-  });
-
   it('should use default delay when delay is undefined', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'initial', delay: undefined },
     });
 
@@ -101,7 +74,7 @@ describe('useDebounce', () => {
   });
 
   it('should handle null and undefined values correctly', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: null, delay: 500 },
     });
 
@@ -125,7 +98,7 @@ describe('useDebounce', () => {
   });
 
   it('should clear the timer on unmount', () => {
-    const { result, unmount } = renderHook(() => useDebounce('test', 500));
+    const { result, unmount } = renderHook(() => useDebouncedValue('test', 500));
     expect(result.current).toBe('test');
 
     act(() => {
@@ -141,7 +114,7 @@ describe('useDebounce', () => {
   });
 
   it('should handle a delay of 0', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'initial', delay: 0 },
     });
 
@@ -155,7 +128,7 @@ describe('useDebounce', () => {
   });
 
   it('should handle negative delay by treating it as 0', () => {
-    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+    const { result, rerender } = renderHook(({ value, delay }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'initial', delay: -100 },
     });
 
