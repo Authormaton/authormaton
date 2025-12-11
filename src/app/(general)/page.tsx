@@ -1,9 +1,10 @@
+import React, { Suspense } from 'react';
 import { getProjects } from '@/actions/projects/getProjects';
 import { getProjectAnalytics } from '@/actions/analytics';
 import { BasicAlert } from '@/components/common/BasicAlert';
 import { HomePageContainer } from '@/components/pages/home/HomePageContainer';
 import { ExportDialog } from '@/components/models/projects/ExportDialog';
-import { ProjectStats } from '@/components/models/analytics/ProjectStats';
+const ProjectStats = React.lazy(() => import('@/components/models/analytics/ProjectStats'));
 import { safeAwait } from '@/lib/async';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
@@ -29,4 +30,12 @@ export default async function HomePage() {
 
   const { projects: initialProjects, total } = projectsResult.data;
 
-  return <HomePageContainer initialProjects={initialProjects} userId={userId} />;
+  return (
+    <>
+      <HomePageContainer initialProjects={initialProjects} userId={userId} />
+      <Suspense fallback={<div>Loading analytics...</div>}>
+        <ProjectStats />
+      </Suspense>
+    </>
+  );
+}
