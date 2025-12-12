@@ -6,17 +6,13 @@ import React from 'react';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body>
-        <SidebarProvider>
-          <AppSidebar />
-          <main className='w-full'>
-            <LoadingProvider>
-              <GeneralLayout>{children}</GeneralLayout>
-            </LoadingProvider>
-          </main>
-        </SidebarProvider>
-      </body>
-    </html>
+    <SidebarProvider>
+      <AppSidebar />
+      <div className='w-full'>
+        <LoadingProvider>
+          <GeneralLayout>{children}</GeneralLayout>
+        </LoadingProvider>
+      </div>
+    </SidebarProvider>
   );
 }
