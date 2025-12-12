@@ -17,7 +17,9 @@ export default function RootLayout({
     <html lang='en'>
       <body>
         <ErrorBoundary>
-          {children}
+          <main>
+            {children}
+          </main>
           <ToastProvider />
         </ErrorBoundary>
       </body>

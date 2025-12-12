@@ -29,7 +29,7 @@ export function GeneralLayout({ children }: { children: React.ReactNode }) {
       )}
       <div className='flex flex-col'>
         <Header />
-        <main className='flex flex-1 flex-col gap-2 px-2 py-2 lg:gap-6 sm:px-4 sm:py-3'>{children}</main>
+        <div className='flex flex-1 flex-col gap-2 px-2 py-2 lg:gap-6 sm:px-4 sm:py-3'>{children}</div>
       </div>
     </div>
   );
