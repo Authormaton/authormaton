@@ -9,7 +9,7 @@
     "lint": "npx eslint",
     "format": "npx prettier --write .",
     "prisma:migrate": "npx prisma migrate dev",
-    "test": "jest"
+    "test": "npx jest"
   },
   "dependencies": {
     "@eslint/js": "^9.37.0",
