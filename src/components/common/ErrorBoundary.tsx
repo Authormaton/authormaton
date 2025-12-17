@@ -5,6 +5,7 @@ import { BasicAlert } from './BasicAlert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { IoIosArrowDown } from 'react-icons/io';
+import { recordAnalyticsEvent } from '@/lib/analytics-client';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -27,6 +28,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    recordAnalyticsEvent('error_boundary_catch', {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+    });
   }
 
   render() {
