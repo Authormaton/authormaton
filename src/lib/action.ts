@@ -89,8 +89,8 @@ export const protectedAction = authActionClient.use(async ({ next, ctx, parsedIn
     }
   });
 
-  if (!projectMember || !hasProjectPermission(projectMember.role, requiredRoles)) {
-    throw new Error('Not authorized to perform this action on this project.');
+  if (!projectMember || hasProjectPermission(projectMember.role, requiredRoles).success === false) {
+    throw new Error('Permission denied: Not authorized to perform this action on this project.');
   }
 
   return next({
