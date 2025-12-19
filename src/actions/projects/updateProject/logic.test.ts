@@ -113,13 +113,30 @@ describe('updateProject', () => {
     expect(prisma.project.update).not.toHaveBeenCalled();
   });
 
-  it('should re-throw unexpected errors', async () => {
-    const mockError = new Error('Database connection failed');
-    (prisma.project.update as jest.Mock).mockRejectedValue(mockError);
+  it('should return BAD_REQUEST error if title is empty', async () => {
+    const input = { id: 'project-123', title: '   ' };
+    const result = await updateProject(input);
 
-    const input = { id: 'project-123', title: 'New Title' };
-    await expect(updateProject(input)).rejects.toThrow(mockError);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe('Title is required');
+      expect(result.errorCode).toBe(ErrorCodes.BAD_REQUEST);
+    }
+    expect(prisma.project.update).not.toHaveBeenCalled();
+    expect(prisma.project.updateMany).not.toHaveBeenCalled();
+  });
 
-    expect(prisma.project.update).toHaveBeenCalled();
+  it('should return BAD_REQUEST error if title is too long', async () => {
+    const longTitle = 'a'.repeat(201); // 201 characters long
+    const input = { id: 'project-123', title: longTitle };
+    const result = await updateProject(input);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe('Title is too long');
+      expect(result.errorCode).toBe(ErrorCodes.BAD_REQUEST);
+    }
+    expect(prisma.project.update).not.toHaveBeenCalled();
+    expect(prisma.project.updateMany).not.toHaveBeenCalled();
   });
 });
