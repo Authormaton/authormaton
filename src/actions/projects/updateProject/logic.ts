@@ -12,6 +12,15 @@ export async function updateProject(input: UpdateProjectInput): Promise<Result<P
 
   try {
     let updatedProject: Project;
+
+    const trimmedTitle = title.trim();
+    if (trimmedTitle.length === 0) {
+      return error('Title is required', ErrorCodes.BAD_REQUEST);
+    }
+    if (trimmedTitle.length > 200) {
+      return error('Title is too long', ErrorCodes.BAD_REQUEST);
+    }
+
     if (lastUpdatedAt) {
       const result = await prisma.project.updateMany({
         where: {
@@ -19,7 +28,7 @@ export async function updateProject(input: UpdateProjectInput): Promise<Result<P
           updatedAt: new Date(lastUpdatedAt),
         },
         data: {
-          title,
+          title: trimmedTitle,
         },
       });
 
@@ -42,7 +51,7 @@ export async function updateProject(input: UpdateProjectInput): Promise<Result<P
       updatedProject = await prisma.project.update({
         where: { id },
         data: {
-          title,
+          title: trimmedTitle,
         },
       });
     }
